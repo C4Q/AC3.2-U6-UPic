@@ -11,7 +11,7 @@ import UIKit
 class ArchitectureViewController: UIViewController, CellTitled {
 
     // MARK: - Properties
-    let titleForCell = "Architecture"
+    let titleForCell = "ARCHITECTURE"
     
     override func viewDidLoad() {
         super.viewDidLoad()
