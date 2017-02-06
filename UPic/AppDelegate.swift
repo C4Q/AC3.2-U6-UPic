@@ -15,7 +15,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FIRApp.configure()
 
@@ -42,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         profileTab.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
         profileVC.tabBarItem = profileTab
         
-        
+
         
         if let font = UIFont(name: "Noteworthy", size: 20) {
             UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: font,
