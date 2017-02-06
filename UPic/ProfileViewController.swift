@@ -8,12 +8,14 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
 
 class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // MARK: - Properties
     var propertyAnimator: UIViewPropertyAnimator?
     var titleForCell = "LOGIN/REGISTER"
+    var activeField: UITextField?
 
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -163,14 +165,73 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         propertyAnimator?.startAnimation()
     }
     
+    //MARK:- UITextFieldDelegate
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        activeField = textField
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextFieldDidEndEditingReason) {
+        activeField = nil
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == self.passwordTextField {
+            self.view.endEditing(true)
+            return false
+        }
+        return true
+    }
+    private func updateInterface() {
+        if let user = FIRAuth.auth()?.currentUser {
+            
+        } else {
+            self.usernameTextField.text = ""
+            self.loginButton.setTitle("Log In", for: .normal)
+        }
+    }
+
+    
     // MARK: - Actions
     func didTapLogin(sender: UIButton) {
-        
+        if FIRAuth.auth()?.currentUser != nil {
+            do {
+                try FIRAuth.auth()?.signOut()
+            }
+            catch {
+                print(error)
+            }
+        }
+        else if let email = usernameTextField.text, let password = passwordTextField.text {
+            FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+                if user != nil {
+                    self.updateInterface()
+                }
+                else {
+                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                    
+                }
+            })
+        }
     }
     
     func didTapRegister(sender: UIButton) {
-        
+        if let email = usernameTextField.text, let password = passwordTextField.text {
+            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+                if user != nil {
+                    self.updateInterface()
+                }
+                else {
+                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            })
+        }
     }
+    
 
     // MARK: - Lazy Instantiates
     // Logo Image View
