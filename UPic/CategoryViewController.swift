@@ -77,14 +77,39 @@ class CategoryViewController: UITableViewController, CellTitled {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         
+        let newImage = UIImageView()
+        newImage.contentMode = .scaleAspectFit
+        
+        let newOverlay = UIView()
+        newOverlay.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
+        
+        let newLabel = UILabel()
+        newLabel.textAlignment = .center
+        newLabel.textColor = ColorPalette.textIconColor
+        newLabel.layer.borderColor = ColorPalette.textIconColor.cgColor
+        newLabel.layer.borderWidth = 3.0
+        
+        setHierarchyAndConstraintsOf(imageView: newImage,
+                                     overlay: newOverlay,
+                                     label: newLabel,
+                                     to: cell)
+        
+        let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 20)]
+        
         switch (indexPath.section, indexPath.row) {
         case (0, let row):
-            //TODO: set image, set overlay, set label
-            cell.textLabel?.text = woofMeowViewControllers[row].titleForCell
+            //TODO: set image, set label
+            let boldString = NSMutableAttributedString(string: woofMeowViewControllers[row].titleForCell, attributes: attrs)
+            
+            newLabel.text = String(describing: boldString)
         case (1, 0):
-            cell.textLabel?.text = natureViewControllers[0].titleForCell
+            let boldString = NSMutableAttributedString(string: natureViewControllers[0].titleForCell, attributes: attrs)
+
+            newLabel.text = String(describing: boldString)
         default:
-            cell.textLabel?.text = architectureViewControllers[0].titleForCell
+            let boldString = NSMutableAttributedString(string: architectureViewControllers[0].titleForCell, attributes: attrs)
+
+            newLabel.text = String(describing: boldString)
         }
         
         return cell
@@ -108,7 +133,25 @@ class CategoryViewController: UITableViewController, CellTitled {
         }
     }
     
-    // MARK: - Lazy Views
+    internal func setHierarchyAndConstraintsOf(imageView: UIImageView, overlay: UIView, label: UILabel, to cell: UITableViewCell) {
+        cell.addSubview(imageView)
+        cell.addSubview(overlay)
+        cell.addSubview(label)
+        
+        imageView.snp.makeConstraints { (make) in
+            make.leading.top.trailing.bottom.equalTo(cell)
+        }
+        
+        overlay.snp.makeConstraints { (make) in
+            make.leading.top.trailing.bottom.equalTo(imageView)
+        }
+        
+        label.snp.makeConstraints { (make) in
+            make.center.equalTo(overlay)
+            make.width.equalTo(200.0)
+            make.height.equalTo(80.0)
+        }
+    }
     
 }
 
