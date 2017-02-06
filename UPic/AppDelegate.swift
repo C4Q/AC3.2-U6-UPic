@@ -17,9 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
-        let categoryVC = CategoryViewController()
+        let categoryVC = UINavigationController(rootViewController: CategoryViewController())
         let uploadVC = UploadViewController()
-        let profileVC = ProfileViewController()
+        let profileVC = UINavigationController(rootViewController: ProfileViewController())
         
         let tabs = UITabBarController()
         tabs.viewControllers = [categoryVC, uploadVC, profileVC]
@@ -38,9 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         profileTab.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
         profileVC.tabBarItem = profileTab
         
-        let navigationController = UINavigationController(rootViewController: tabs)
-        navigationController.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
-        navigationController.navigationBar.barTintColor = ColorPalette.darkPrimaryColor
+        
         
         if let font = UIFont(name: "Noteworthy", size: 20) {
             UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: font,
@@ -52,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabs.tabBar.tintColor = ColorPalette.accentColor
         
         
-        self.window?.rootViewController = navigationController
+        self.window?.rootViewController = tabs
         
         self.window?.makeKeyAndVisible()
 

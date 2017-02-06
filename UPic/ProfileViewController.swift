@@ -105,7 +105,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().inset(16.0)
         }
-
+        
     }
     
     // MARK: Property Animations
