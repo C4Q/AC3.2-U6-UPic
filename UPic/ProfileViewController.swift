@@ -9,9 +9,10 @@
 import UIKit
 import SnapKit
 
-class ProfileViewController: UIViewController, CellTitled {
+class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // MARK: - Properties
+    var propertyAnimator: UIViewPropertyAnimator?
     var titleForCell = "LOGIN/REGISTER"
 
     // MARK: - View Lifecycle
@@ -19,7 +20,26 @@ class ProfileViewController: UIViewController, CellTitled {
         super.viewDidLoad()
 
         setupViewHierarchy()
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.propertyAnimator = UIViewPropertyAnimator(duration: 2.0, dampingRatio: 0.75, animations: nil)
+        
         configureConstraints()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.animateLogo()
+        
+        self.addSlidingAnimationToUsername()
+        self.addSlidingAnimationToPassword()
+        self.startSlidingAnimations()
     }
 
     // MARK: - Setup View Hierarchy & Constraints
@@ -29,33 +49,39 @@ class ProfileViewController: UIViewController, CellTitled {
         self.tabBarController?.title = titleForCell
         
         view.addSubview(UPicLogo)
-        view.addSubview(usernameTextField)
-        view.addSubview(passwordTextField)
         view.addSubview(usernameContainerView)
         view.addSubview(passwordContainerView)
+        view.addSubview(loginButton)
+        view.addSubview(registerButton)
+
+        usernameContainerView.addSubview(usernameTextField)
+        passwordContainerView.addSubview(passwordTextField)
+        
+        loginButton.addTarget(self, action: #selector(didTapLogin(sender:)), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(didTapRegister(sender:)), for: .touchUpInside)
+
     }
     
     func configureConstraints() {
         // Image View
         UPicLogo.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 200.0, height: 200.0))
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(50.0)
+            make.centerX.bottom.equalToSuperview()
         }
         
         // Containers
         usernameContainerView.snp.makeConstraints { (make) in
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
-            make.top.equalTo(self.UPicLogo.snp.bottom).offset(24.0)
-            make.trailing.equalTo(self.view.snp.leading)
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(self.view.snp.top)
         }
         
         passwordContainerView.snp.makeConstraints { (make) in
             make.width.equalTo(usernameContainerView.snp.width)
             make.height.equalTo(usernameContainerView.snp.height)
-            make.top.equalTo(self.usernameContainerView.snp.bottom).offset(16.0)
-            make.leading.equalTo(self.view.snp.trailing)
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(self.view.snp.top)
         }
         
         // Textfields
@@ -68,10 +94,83 @@ class ProfileViewController: UIViewController, CellTitled {
             make.leading.top.equalTo(passwordContainerView).offset(4.0)
             make.trailing.bottom.equalTo(passwordContainerView).inset(4.0)
         }
+        
+        // Buttons
+        loginButton.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(registerButton.snp.top).inset(8.0)
+        }
+        
+        registerButton.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().inset(16.0)
+        }
 
     }
-
     
+    // MARK: Property Animations
+    internal func addSlidingAnimationToUsername() {
+        
+        propertyAnimator?.addAnimations ({
+            self.usernameContainerView.snp.remakeConstraints { (make) in
+                make.width.equalToSuperview().multipliedBy(0.8)
+                make.height.equalTo(44.0)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(self.UPicLogo.snp.bottom).offset(24.0)
+            }
+            
+            self.view.layoutIfNeeded()
+            }, delayFactor: 0.0)
+    }
+    
+    internal func addSlidingAnimationToPassword() {
+        
+        propertyAnimator?.addAnimations ({
+            self.passwordContainerView.snp.remakeConstraints { (make) in
+                make.width.equalTo(self.usernameContainerView.snp.width)
+                make.height.equalTo(self.usernameContainerView.snp.height)
+                make.top.equalTo(self.usernameContainerView.snp.bottom).offset(16.0)
+                make.trailing.equalTo(self.usernameContainerView.snp.trailing)
+            }
+            
+            self.view.layoutIfNeeded()
+            }, delayFactor: 0.1)
+    }
+    
+    internal func animateLogo() {
+        
+        UPicLogo.transform = CGAffineTransform(scaleX: 0.2, y: 0.2)
+        
+        propertyAnimator?.addAnimations ({
+            self.UPicLogo.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            
+            self.UPicLogo.snp.remakeConstraints({ (make) in
+                make.size.equalTo(CGSize(width: 200.0, height: 200.0))
+                make.centerX.equalToSuperview()
+                make.top.equalToSuperview().offset(75.0)
+            })
+            }, delayFactor: 1.0)
+        
+        
+        UIView.animate(withDuration: 1.5, animations: {
+            self.UPicLogo.alpha = 0.8
+            }, completion: nil)
+        
+        self.view.layoutIfNeeded()
+    }
+    
+    internal func startSlidingAnimations() {
+        propertyAnimator?.startAnimation()
+    }
+    
+    // MARK: - Actions
+    func didTapLogin(sender: UIButton) {
+        
+    }
+    
+    func didTapRegister(sender: UIButton) {
+        
+    }
 
     // MARK: - Lazy Instantiates
     // Logo Image View
@@ -111,6 +210,33 @@ class ProfileViewController: UIViewController, CellTitled {
     internal lazy var passwordContainerView: UIView = {
         let view: UIView = UIView()
         return view
+    }()
+    
+    // Buttons
+    internal lazy var loginButton: UIButton = {
+        let button: UIButton = UIButton(type: .roundedRect)
+        button.setTitle("LOG IN", for: .normal)
+        button.backgroundColor = ColorPalette.primaryColor
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
+        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
+        button.layer.cornerRadius = 4.0
+        button.layer.borderColor = ColorPalette.textIconColor.cgColor
+        button.layer.borderWidth = 2.0
+        button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        return button
+    }()
+    
+    internal lazy var registerButton: UIButton = {
+        let button: UIButton = UIButton(type: .roundedRect)
+        button.setTitle("Register", for: .normal)
+        button.backgroundColor = ColorPalette.primaryColor
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
+        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
+        button.layer.cornerRadius = 4.0
+        button.layer.borderColor = ColorPalette.textIconColor.cgColor
+        button.layer.borderWidth = 2.0
+        button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        return button
     }()
     
 }
