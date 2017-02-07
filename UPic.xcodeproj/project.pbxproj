@@ -90,21 +90,12 @@
 		47E4E5191E48E6F700C5FDBF /* UPic */ = {
 			isa = PBXGroup;
 			children = (
-				47E4E5421E4A554200C5FDBF /* Views */,
-				47E4E5361E4903EA00C5FDBF /* View Controllers */,
-				47E4E5371E49040200C5FDBF /* Supporting Files */,
-			);
-			path = UPic;
-			sourceTree = "<group>";
-		};
-		47E4E5361E4903EA00C5FDBF /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
 				47E4E53F1E4A397600C5FDBF /* Gallery View Controllers */,
 				47E4E5431E4A63A200C5FDBF /* Upload View Controllers */,
 				47E4E5441E4A63B000C5FDBF /* Profile View Controllers */,
+				47E4E5371E49040200C5FDBF /* Supporting Files */,
 			);
-			name = "View Controllers";
+			path = UPic;
 			sourceTree = "<group>";
 		};
 		47E4E5371E49040200C5FDBF /* Supporting Files */ = {
@@ -123,27 +114,27 @@
 		47E4E53F1E4A397600C5FDBF /* Gallery View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */,
-				47E4E5451E4A63D400C5FDBF /* GalleryCollectionViewController.swift */,
+				47E4E5401E4A553E00C5FDBF /* CategoryTableViewCell.swift */,
+				47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */,
+				47E4E5421E4A554200C5FDBF /* Gallery Views */,
 			);
 			name = "Gallery View Controllers";
 			sourceTree = "<group>";
 		};
-		47E4E5421E4A554200C5FDBF /* Views */ = {
+		47E4E5421E4A554200C5FDBF /* Gallery Views */ = {
 			isa = PBXGroup;
 			children = (
-				47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */,
-				47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */,
-				47E4E5401E4A553E00C5FDBF /* CategoryTableViewCell.swift */,
-				47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */,
+				47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */,
+				47E4E5451E4A63D400C5FDBF /* GalleryCollectionViewController.swift */,
 			);
-			name = Views;
+			name = "Gallery Views";
 			sourceTree = "<group>";
 		};
 		47E4E5431E4A63A200C5FDBF /* Upload View Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				47E4E5301E48E86900C5FDBF /* UploadViewController.swift */,
+				47E4E54D1E4A70AB00C5FDBF /* Upload Views */,
 			);
 			name = "Upload View Controllers";
 			sourceTree = "<group>";
@@ -156,6 +147,15 @@
 				3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */,
 			);
 			name = "Profile View Controllers";
+			sourceTree = "<group>";
+		};
+		47E4E54D1E4A70AB00C5FDBF /* Upload Views */ = {
+			isa = PBXGroup;
+			children = (
+				47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */,
+				47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */,
+			);
+			name = "Upload Views";
 			sourceTree = "<group>";
 		};
 		9BB554D1529C9344DA0DD0EB /* Frameworks */ = {
