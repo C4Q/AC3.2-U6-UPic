@@ -15,7 +15,7 @@ class NatureViewController: UIViewController, CellTitled {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.tabBarController?.title = titleForCell
         // Do any additional setup after loading the view.
     }
 

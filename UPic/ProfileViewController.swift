@@ -182,7 +182,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     private func updateInterface() {
         if let user = FIRAuth.auth()?.currentUser {
-            
+            self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
         } else {
             self.usernameTextField.text = ""
             self.loginButton.setTitle("Log In", for: .normal)

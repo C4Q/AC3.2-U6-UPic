@@ -17,7 +17,11 @@ class LoggedInViewController: UIViewController {
         super.viewDidLoad()
         setupViewHierarchy()
         configureConstraints()
+        self.navigationItem.hidesBackButton = true
+        self.navigationItem.rightBarButtonItem = editButtonItem
+        self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
      }
+    
 
     func configureConstraints() {
                // Buttons
@@ -45,7 +49,7 @@ class LoggedInViewController: UIViewController {
       
             do {
                 try FIRAuth.auth()?.signOut()
-                presentingViewController?.dismiss(animated: true, completion: nil)
+                _ = self.navigationController?.popViewController(animated: true)
             }
             catch {
                 print(error)
