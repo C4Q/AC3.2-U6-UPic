@@ -12,6 +12,7 @@
 		3EF2F3D71E493E4B00F0AF81 /* ArchitectureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2F3D41E493E4B00F0AF81 /* ArchitectureViewController.swift */; };
 		3EF2F3D81E493E4B00F0AF81 /* NatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2F3D51E493E4B00F0AF81 /* NatureViewController.swift */; };
 		3EF2F3DB1E493EEC00F0AF81 /* WoofMeowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2F3DA1E493EEC00F0AF81 /* WoofMeowViewController.swift */; };
+		3EF2F3DD1E4A1E9A00F0AF81 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */; };
 		4539F1BEBFE6560F2A1C3959 /* Pods_UPic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE930EC10FFB37EBCC6B7EEC /* Pods_UPic.framework */; };
 		47E4E51B1E48E6F700C5FDBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E51A1E48E6F700C5FDBF /* AppDelegate.swift */; };
 		47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E5211E48E6F700C5FDBF /* Assets.xcassets */; };
@@ -29,6 +30,7 @@
 		3EF2F3D41E493E4B00F0AF81 /* ArchitectureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchitectureViewController.swift; sourceTree = "<group>"; };
 		3EF2F3D51E493E4B00F0AF81 /* NatureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NatureViewController.swift; sourceTree = "<group>"; };
 		3EF2F3DA1E493EEC00F0AF81 /* WoofMeowViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WoofMeowViewController.swift; sourceTree = "<group>"; };
+		3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		47E4E5171E48E6F700C5FDBF /* UPic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E4E51A1E48E6F700C5FDBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		47E4E5211E48E6F700C5FDBF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				47E4E5301E48E86900C5FDBF /* UploadViewController.swift */,
 				47E4E5321E48E88100C5FDBF /* ProfileViewController.swift */,
 				3E5BE0531E49278600DFE32F /* LoggedInViewController.swift */,
+				3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				47E4E52F1E48E83C00C5FDBF /* CategoryViewController.swift in Sources */,
+				3EF2F3DD1E4A1E9A00F0AF81 /* RegisterViewController.swift in Sources */,
 				3EF2F3D81E493E4B00F0AF81 /* NatureViewController.swift in Sources */,
 				47E4E5311E48E86900C5FDBF /* UploadViewController.swift in Sources */,
 				3EF2F3DB1E493EEC00F0AF81 /* WoofMeowViewController.swift in Sources */,

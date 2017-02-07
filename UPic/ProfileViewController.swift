@@ -180,30 +180,14 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         }
         return true
     }
-    private func updateInterface() {
-        if let user = FIRAuth.auth()?.currentUser {
-            self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
-        } else {
-            self.usernameTextField.text = ""
-            self.loginButton.setTitle("Log In", for: .normal)
-        }
-    }
-
+    
     
     // MARK: - Actions
     func didTapLogin(sender: UIButton) {
-        if FIRAuth.auth()?.currentUser != nil {
-            do {
-                try FIRAuth.auth()?.signOut()
-            }
-            catch {
-                print(error)
-            }
-        }
-        else if let email = usernameTextField.text, let password = passwordTextField.text {
+      if let email = usernameTextField.text, let password = passwordTextField.text {
             FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if user != nil {
-                    self.updateInterface()
+            self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
                 }
                 else {
                     let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
@@ -217,19 +201,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     func didTapRegister(sender: UIButton) {
-        if let email = usernameTextField.text, let password = passwordTextField.text {
-            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
-                if user != nil {
-                    self.updateInterface()
-                }
-                else {
-                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                    alert.addAction(ok)
-                    self.present(alert, animated: true, completion: nil)
-                }
-            })
-        }
+        self.present(RegisterViewController(), animated: true, completion: nil)
     }
     
 
