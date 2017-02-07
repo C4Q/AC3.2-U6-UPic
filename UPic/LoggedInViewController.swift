@@ -58,7 +58,6 @@ class LoggedInViewController: UIViewController {
 
 
     // MARK: - Lazy Instantiates
-    // Logo Image View
     
     // Buttons
     internal lazy var logoutButton: UIButton = {

@@ -9,5 +9,5 @@ target 'UPic' do
   pod ‘SnapKit’
   pod 'Firebase/Core'
   pod ‘Firebase/Auth’
-
+  pod 'Firebase/Database'
 end
