@@ -91,10 +91,10 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if user != nil {
                     self.ref = FIRDatabase.database().reference()
-                    self.ref.child("users").child((user?.uid)!).setValue([
-                        "username": self.usernameTextField.text,
-                        "email": self.emailTextField.text,
-                        "password": self.passwordTextField.text
+                    self.ref.child("users").child(self.usernameTextField.text!).setValue([
+                        "password": self.passwordTextField.text,
+                        "UID": user?.uid,
+                        "email" : self.emailTextField.text
                         ])
                  }
                 else {
