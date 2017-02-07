@@ -21,6 +21,8 @@
 		47E4E5311E48E86900C5FDBF /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5301E48E86900C5FDBF /* UploadViewController.swift */; };
 		47E4E5331E48E88100C5FDBF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5321E48E88100C5FDBF /* ProfileViewController.swift */; };
 		47E4E5351E48EA8300C5FDBF /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5341E48EA8300C5FDBF /* Utilities.swift */; };
+		9B831C681E4A48930011F020 /* ImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B831C661E4A48930011F020 /* ImagesCollectionViewCell.swift */; };
+		9B831C691E4A48930011F020 /* ImagesCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9B831C671E4A48930011F020 /* ImagesCollectionViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,8 @@
 		47E4E5301E48E86900C5FDBF /* UploadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadViewController.swift; sourceTree = "<group>"; };
 		47E4E5321E48E88100C5FDBF /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		47E4E5341E48EA8300C5FDBF /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		9B831C661E4A48930011F020 /* ImagesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesCollectionViewCell.swift; sourceTree = "<group>"; };
+		9B831C671E4A48930011F020 /* ImagesCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesCollectionViewCell.xib; sourceTree = "<group>"; };
 		BF106418BB9E589B63A2D021 /* Pods-UPic.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPic.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UPic/Pods-UPic.debug.xcconfig"; sourceTree = "<group>"; };
 		DE930EC10FFB37EBCC6B7EEC /* Pods_UPic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UPic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -100,6 +104,8 @@
 				3EF2F3D51E493E4B00F0AF81 /* NatureViewController.swift */,
 				47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */,
 				47E4E5301E48E86900C5FDBF /* UploadViewController.swift */,
+				9B831C661E4A48930011F020 /* ImagesCollectionViewCell.swift */,
+				9B831C671E4A48930011F020 /* ImagesCollectionViewCell.xib */,
 				47E4E5321E48E88100C5FDBF /* ProfileViewController.swift */,
 				3E5BE0531E49278600DFE32F /* LoggedInViewController.swift */,
 				3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */,
@@ -163,6 +169,7 @@
 				TargetAttributes = {
 					47E4E5161E48E6F700C5FDBF = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = G6ZU47QNTF;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -192,6 +199,7 @@
 			files = (
 				47E4E5251E48E6F700C5FDBF /* LaunchScreen.storyboard in Resources */,
 				47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */,
+				9B831C691E4A48930011F020 /* ImagesCollectionViewCell.xib in Resources */,
 				3E5BE0521E49227800DFE32F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,6 +261,7 @@
 			files = (
 				47E4E52F1E48E83C00C5FDBF /* CategoryViewController.swift in Sources */,
 				3EF2F3DD1E4A1E9A00F0AF81 /* RegisterViewController.swift in Sources */,
+				9B831C681E4A48930011F020 /* ImagesCollectionViewCell.swift in Sources */,
 				3EF2F3D81E493E4B00F0AF81 /* NatureViewController.swift in Sources */,
 				47E4E5311E48E86900C5FDBF /* UploadViewController.swift in Sources */,
 				3EF2F3DB1E493EEC00F0AF81 /* WoofMeowViewController.swift in Sources */,
@@ -379,6 +388,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G6ZU47QNTF;
 				INFOPLIST_FILE = UPic/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Ericchang.UPic;
@@ -393,6 +403,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G6ZU47QNTF;
 				INFOPLIST_FILE = UPic/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Ericchang.UPic;
