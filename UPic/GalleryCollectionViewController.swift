@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import FirebaseDatabase
 
 class GalleryCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CellTitled {
     
@@ -15,11 +16,14 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     var titleForCell: String = ""
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
+    let ref = FIRDatabase.database().reference()
+    var imagesToLoad = [Data]()
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewHierarchy()
+        loadCollectionImages()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,9 +33,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
+    
+    // MARK: - Setup View Hierarchy & Constraints
     internal func setupViewHierarchy() {
         self.edgesForExtendedLayout = []
         
@@ -51,71 +55,97 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         
         view.addSubview(colView)
     }
-
+    
     internal func configureConstraints() {
         colView.snp.makeConstraints { (make) in
             make.leading.top.trailing.bottom.equalToSuperview()
         }
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    // MARK: - Firebase Storage - Download Images
+    func loadCollectionImages() {
+        
+        ref.child("categories").child("WOOFS & MEOWS").observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            if let photos = snapshot.value as? NSDictionary {
+                
+                for each in photos {
+                    guard let imgURL = URL(string: each.value as! String) else { continue }
+                    if let data = NSData(contentsOf: imgURL) {
+                        self.imagesToLoad.append(data as Data)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.colView.reloadData()
+                    }
+                }
+                
+            }
+        }) { (error) in
+            print(error.localizedDescription)
+        }
     }
-    */
-
+    
+    /*
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using [segue destinationViewController].
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
     // MARK: UICollectionViewDataSource
-
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
-
+    
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return imagesToLoad.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-    
-        cell.backgroundColor = ColorPalette.lightPrimaryColor
-    
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
+        
+        cell.imageView.image = UIImage(data: imagesToLoad[indexPath.row])
+
+        cell.textLabel.text = String(describing: imagesToLoad[indexPath.row])
+        
         return cell
     }
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
-    }
-    */
-
+    // MARK: UICollectionViewDelegate
+    
+    /*
+     // Uncomment this method to specify if the specified item should be highlighted during tracking
+     override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+     return true
+     }
+     */
+    
+    /*
+     // Uncomment this method to specify if the specified item should be selected
+     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+     return true
+     }
+     */
+    
+    /*
+     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
+     override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
+     return false
+     }
+     
+     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+     return false
+     }
+     
+     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+     
+     }
+     */
+    
 }
