@@ -17,6 +17,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
     let bottomCollectionViewNibName = "ImagesCollectionViewCell"
     var imagesCollectionView: UICollectionView!
+
     
     var userReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
     
@@ -33,6 +34,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         dump(self.userReference)
         dump(FIRStorage.storage().reference())
         downloadImages()
+        //imagesCollectionView.clearsSelectionOnViewWillAppear = false
      }
     
 
@@ -107,6 +109,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
                 // Create a UIImage, add it to the array
                 let pic = UIImage(data: data!)
                 self.picArray.append(pic!)
+                DispatchQueue.main.async {
+                    self.imagesCollectionView.reloadData()
+                }
             }
             
         })
@@ -116,8 +121,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCollectionViewCell
         cell.collectionImageView.image = nil
-        cell.collectionImageView.image = self.picArray[indexPath.row]
-        cell.setNeedsLayout()
+        
+            cell.collectionImageView.image = self.picArray[indexPath.row]
+            cell.setNeedsLayout()
+
         
         return cell
     }
