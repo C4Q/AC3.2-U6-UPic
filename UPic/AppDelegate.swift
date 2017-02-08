@@ -21,7 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         let categoryVC = UINavigationController(rootViewController: CategoryViewController())
-        let uploadVC = UploadViewController()
+        //let uploadVC = UploadViewController()
+        let uploadVC = UINavigationController(rootViewController: UploadViewController())
         let profileVC = UINavigationController(rootViewController: ProfileViewController())
         
         let tabs = UITabBarController()
