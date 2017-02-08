@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import Firebase
 
 private enum GallerySections: String {
     case woofmeow = "WOOFS & MEOWS"
@@ -33,6 +34,7 @@ class CategoryViewController: UITableViewController, CellTitled {
     // MARK: - Properties
     let titleForCell = "CATEGORIES"
     let cellIdentifier: String = "CategoryCellIdentifier"
+    let storage = FIRStorage.storage()
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -41,7 +43,7 @@ class CategoryViewController: UITableViewController, CellTitled {
         self.tableView.rowHeight = 250.0
         
         self.tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        self.title = titleForCell
+        self.navigationItem.title = titleForCell
         
         let backBarButtonItem = UIBarButtonItem()
         backBarButtonItem.title = "Back"
@@ -82,15 +84,13 @@ class CategoryViewController: UITableViewController, CellTitled {
         case (0):
             //TODO: set image
             cell.newLabel.text = "WOOFS & MEOWS"
-            cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
         case (1):
             cell.newLabel.text = "NATURE"
-            cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
         default:
             cell.newLabel.text = "ARCHITECTURE"
-            cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
         }
         
+        cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
         cell.selectionStyle = .none
         return cell
     }

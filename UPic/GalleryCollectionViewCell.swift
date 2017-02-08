@@ -10,8 +10,11 @@ import UIKit
 
 class GalleryCollectionViewCell: UICollectionViewCell {
     
+    var imageView = UIImageView()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        imageView.contentMode = .scaleAspectFit
     }
     
     required init?(coder aDecoder: NSCoder) {

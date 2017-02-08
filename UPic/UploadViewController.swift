@@ -156,6 +156,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
         let imageName = NSUUID().uuidString
         let user = FIRAuth.auth()?.currentUser
+       
         if user?.uid != nil {
        
             let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
@@ -181,7 +182,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 
             })
         }
-    }
         else {
             let alert = UIAlertController(title: "Error", message: "You need to log in to upload images", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
