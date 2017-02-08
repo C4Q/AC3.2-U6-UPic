@@ -158,7 +158,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let user = FIRAuth.auth()?.currentUser
         if user?.uid != nil {
        
-            let storageRef = FIRStorage.storage().reference().child("\(self.titleTextField.text!).png")
+            let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
        
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
             storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
