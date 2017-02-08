@@ -8,13 +8,17 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
+import FirebaseDatabase
 
 class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // MARK: - Properties
     var propertyAnimator: UIViewPropertyAnimator?
     var titleForCell = "LOGIN/REGISTER"
-
+    var activeField: UITextField?
+    var ref: FIRDatabaseReference!
+    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,7 +109,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().inset(16.0)
         }
-
+        
     }
     
     // MARK: Property Animations
@@ -163,14 +167,58 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         propertyAnimator?.startAnimation()
     }
     
+    //MARK:- UITextFieldDelegate
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        activeField = textField
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextFieldDidEndEditingReason) {
+        activeField = nil
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == self.passwordTextField {
+            self.view.endEditing(true)
+            return false
+        }
+        return true
+    }
+    
+    func validateEmail(candidate: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: candidate)
+    }
+    
     // MARK: - Actions
     func didTapLogin(sender: UIButton) {
+        self.ref = FIRDatabase.database().reference()
+//        self.ref.child("users").child(usernameTextField.text!).observeSingleEvent(of: .value, with: { (snapshot) in
+//            let value = snapshot.value as? NSDictionary
+//            let anEmail = value?["email"] as? String
         
+            if let password = self.passwordTextField.text, let email = self.usernameTextField.text {
+                FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+                    if user != nil {
+                        print(user?.displayName)
+                        print("From logging in \(FIRAuth.auth()?.currentUser?.displayName)")
+                        print("From logging in \(FIRAuth.auth()?.currentUser?.uid)")
+                        self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
+                    }
+                    else {
+                        let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                        alert.addAction(ok)
+                        self.present(alert, animated: true, completion: nil)
+                        
+                    }
+                })
+            }
+        //})
     }
     
     func didTapRegister(sender: UIButton) {
-        
+        self.present(RegisterViewController(), animated: true, completion: nil)
     }
+    
 
     // MARK: - Lazy Instantiates
     // Logo Image View
