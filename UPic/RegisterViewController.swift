@@ -92,9 +92,10 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
                 if user != nil {
                     self.ref = FIRDatabase.database().reference()
                     self.ref.child("users").child((user?.uid)!).setValue([
+                        "password": self.passwordTextField.text,
                         "username": self.usernameTextField.text,
-                        "email": self.emailTextField.text,
-                        "password": self.passwordTextField.text
+                        "email" : self.emailTextField.text,
+                       // "uploadedimages": ["", ""]
                         ])
                  }
                 else {

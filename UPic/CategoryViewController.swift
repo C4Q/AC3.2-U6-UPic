@@ -9,10 +9,10 @@
 import UIKit
 import SnapKit
 
-enum GallerySections: String {
-    case woofmeow = "Woofs & Meows"
-    case nature = "Nature"
-    case architecture = "Architecture"
+private enum GallerySections: String {
+    case woofmeow = "WOOFS & MEOWS"
+    case nature = "NATURE"
+    case architecture = "ARCHITECTURE"
     
     static let sections: [String] = [GallerySections.woofmeow,
                                      GallerySections.nature,
@@ -25,22 +25,22 @@ enum GallerySections: String {
 
 class CategoryViewController: UITableViewController, CellTitled {
     
-    // Gallery View Controllers
-    private let woofMeowViewControllers: [CellTitled] = [WoofMeowViewController()]
-    private let natureViewControllers: [CellTitled] = [NatureViewController()]
-    private let architectureViewControllers: [CellTitled] = [ArchitectureViewController()]
+//    // Gallery View Controllers
+//    private let woofMeowViewControllers: [CellTitled] = [WoofMeowViewController()]
+//    private let natureViewControllers: [CellTitled] = [NatureViewController()]
+//    private let architectureViewControllers: [CellTitled] = [ArchitectureViewController()]
     
     // MARK: - Properties
     let titleForCell = "CATEGORIES"
-    let cellIdentifier: String = "IndexCellIdentifier"
+    let cellIdentifier: String = "CategoryCellIdentifier"
     
-    
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewHierarchy()
         self.tableView.rowHeight = 250.0
         
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        self.tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         self.title = titleForCell
         
         let backBarButtonItem = UIBarButtonItem()
@@ -50,7 +50,7 @@ class CategoryViewController: UITableViewController, CellTitled {
     }
     
     // MARK: - Setup View Hierarchy & Constraints
-    func setupViewHierarchy() {
+    private func setupViewHierarchy() {
         self.edgesForExtendedLayout = []
         navigationController?.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
         navigationController?.navigationBar.barTintColor = ColorPalette.darkPrimaryColor
@@ -64,94 +64,57 @@ class CategoryViewController: UITableViewController, CellTitled {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return woofMeowViewControllers.count
-        case 1:
-            return natureViewControllers.count
-        default:
-            return architectureViewControllers.count
-        }
+//        switch section {
+//        case 0:
+//            return woofMeowViewControllers.count
+//        case 1:
+//            return natureViewControllers.count
+//        default:
+//            return architectureViewControllers.count
+//        }
+        return 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CategoryTableViewCell
         
-        let newImage = UIImageView()
-        newImage.contentMode = .scaleAspectFit
-        
-        let newOverlay = UIView()
-        newOverlay.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
-        
-        let newLabel = UILabel()
-        newLabel.textAlignment = .center
-        newLabel.textColor = ColorPalette.textIconColor
-        newLabel.layer.borderColor = ColorPalette.textIconColor.cgColor
-        newLabel.layer.borderWidth = 3.0
-        
-        setHierarchyAndConstraintsOf(imageView: newImage,
-                                     overlay: newOverlay,
-                                     label: newLabel,
-                                     to: cell)
-        
-        let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 20)]
-        
-        switch (indexPath.section, indexPath.row) {
-        case (0, let row):
-            //TODO: set image, set label
-            let boldString = NSMutableAttributedString(string: woofMeowViewControllers[row].titleForCell, attributes: attrs)
-            
-            newLabel.text = String(describing: boldString)
-        case (1, 0):
-            let boldString = NSMutableAttributedString(string: natureViewControllers[0].titleForCell, attributes: attrs)
-
-            newLabel.text = String(describing: boldString)
+        switch (indexPath.section) {
+        case (0):
+            //TODO: set image
+            cell.newLabel.text = "WOOFS & MEOWS"
+            cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
+        case (1):
+            cell.newLabel.text = "NATURE"
+            cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
         default:
-            let boldString = NSMutableAttributedString(string: architectureViewControllers[0].titleForCell, attributes: attrs)
-
-            newLabel.text = String(describing: boldString)
+            cell.newLabel.text = "ARCHITECTURE"
+            cell.newLabel.font = UIFont(name: "Optima-Bold", size: 24.0)
         }
         
+        cell.selectionStyle = .none
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return GallerySections.sections[section]
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch (indexPath.section, indexPath.row) {
-        case (0, let row):
-            let wmvc = woofMeowViewControllers[row] as! UIViewController
-            navigationController?.pushViewController(wmvc, animated: true)
-        case (1, 0):
-            let nvc = natureViewControllers[0] as! UIViewController
-            navigationController?.pushViewController(nvc, animated: true)
-        default:
-            let avc = architectureViewControllers[0] as! UIViewController
-            navigationController?.pushViewController(avc, animated: true)
-        }
+//        switch (indexPath.section, indexPath.row) {
+//        case (0, let row):
+//            let wmvc = woofMeowViewControllers[row] as! UIViewController
+//            navigationController?.pushViewController(wmvc, animated: true)
+//        case (1, 0):
+//            let nvc = natureViewControllers[0] as! UIViewController
+//            navigationController?.pushViewController(nvc, animated: true)
+//        default:
+//            let avc = architectureViewControllers[0] as! UIViewController
+//            navigationController?.pushViewController(avc, animated: true)
+//        }
+        let galleryVC = GalleryCollectionViewController()
+        galleryVC.titleForCell = GallerySections.sections[indexPath.section]
+        navigationController?.pushViewController(galleryVC, animated: true)
+        let backItem = UIBarButtonItem()
+        backItem.title = ""
+        navigationItem.backBarButtonItem = backItem
     }
     
-    internal func setHierarchyAndConstraintsOf(imageView: UIImageView, overlay: UIView, label: UILabel, to cell: UITableViewCell) {
-        cell.addSubview(imageView)
-        cell.addSubview(overlay)
-        cell.addSubview(label)
         
-        imageView.snp.makeConstraints { (make) in
-            make.leading.top.trailing.bottom.equalTo(cell)
-        }
-        
-        overlay.snp.makeConstraints { (make) in
-            make.leading.top.trailing.bottom.equalTo(imageView)
-        }
-        
-        label.snp.makeConstraints { (make) in
-            make.center.equalTo(overlay)
-            make.width.equalTo(200.0)
-            make.height.equalTo(80.0)
-        }
-    }
-    
 }
 

@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import FirebaseAuth
+import FirebaseDatabase
 
 class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
@@ -16,7 +17,8 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     var propertyAnimator: UIViewPropertyAnimator?
     var titleForCell = "LOGIN/REGISTER"
     var activeField: UITextField?
-
+    var ref: FIRDatabaseReference!
+    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -181,23 +183,36 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         return true
     }
     
+    func validateEmail(candidate: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: candidate)
+    }
     
     // MARK: - Actions
     func didTapLogin(sender: UIButton) {
-      if let email = usernameTextField.text, let password = passwordTextField.text {
-            FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
-                if user != nil {
-            self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
-                }
-                else {
-                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                    alert.addAction(ok)
-                    self.present(alert, animated: true, completion: nil)
-                    
-                }
-            })
-        }
+        self.ref = FIRDatabase.database().reference()
+//        self.ref.child("users").child(usernameTextField.text!).observeSingleEvent(of: .value, with: { (snapshot) in
+//            let value = snapshot.value as? NSDictionary
+//            let anEmail = value?["email"] as? String
+        
+            if let password = self.passwordTextField.text, let email = self.usernameTextField.text {
+                FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+                    if user != nil {
+                        print(user?.displayName)
+                        print("From logging in \(FIRAuth.auth()?.currentUser?.displayName)")
+                        print("From logging in \(FIRAuth.auth()?.currentUser?.uid)")
+                        self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
+                    }
+                    else {
+                        let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                        alert.addAction(ok)
+                        self.present(alert, animated: true, completion: nil)
+                        
+                    }
+                })
+            }
+        //})
     }
     
     func didTapRegister(sender: UIButton) {
