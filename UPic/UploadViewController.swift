@@ -164,7 +164,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print(error)
                 }
                
-//                FIRDatabase.database().reference().child("users").child((user?.uid)!).updateChildValues(["uploadedImages": [String(describing: metadata!.downloadURL()!)]])
+                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
+                
+                    FIRDatabase.database().reference().child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues(["hello": String(describing: metadata!.downloadURL()!)])
+
+                //(String(describing: metadata!.downloadURL()!))
+//                FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([autoKey: String(describing: metadata!.downloadURL()!)])
+//
+                metadata?.customMetadata = [
+                    "upvotes": "0",
+                    "downvotes": "0"
+                ]
+                print(metadata!.customMetadata)
                 
             })
         }
