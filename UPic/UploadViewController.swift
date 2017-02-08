@@ -24,7 +24,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     var imagesCollectionView: UICollectionView!
     var topImagesCollectionView: UICollectionView!
     //var catagories: [Catagory] = [.animals, .nature, .architecture]
-    var catagories = ["WOOFS & MEOWS","NATURE", "ARCHITECTURE" ]
+    var catagories: [String] = [Catagory.animals, Catagory.nature, Catagory.architecture].map{ $0.rawValue }
     var assetsArr: [PHAsset] = []
     var selectedSegment: Catagory = .animals
     var selectedIndex = 0
@@ -151,6 +151,37 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
     }
     
+    /*
+    let storage = FIRStorage.storage()
+    let data: NSData = myImageData
+    let userProfilePic =
+    let userProfilePic = storageRef.child("users/abc/profileimage.jpg")
+    
+    let uploadTask = userProfilePic.putData(data, metadata: nil) { metadata, error in
+        if (error != nil) {
+            // Uh-oh, an error occurred!
+        } else {
+            let downloadURL = metadata!.downloadURL
+            // store downloadURL in db
+            storeUserProfileInDB(downloadURL)
+        }
+    }
+    
+    func storeUserProfileInDB(profileImgUrl: NSURL) {
+        let ref = FIRDatabase.database().reference()
+        let key = ref.child("users").childByAutoId().key
+        
+        let dictionaryUser = [ "userName"    : name! ,
+                               "imageUrl" : profileImgUrl.absoluteString,
+                               ]
+        
+        let childUpdates = ["/users/\(key)": dictionaryTodo]
+        ref.updateChildValues(childUpdates, withCompletionBlock: { (error, ref) -> Void in
+            //save
+        })
+        
+    }
+    */
     internal func didTapUpload(sender: UIButton) {
         print("From upload, users UID \(FIRAuth.auth()?.currentUser?.uid)")
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")

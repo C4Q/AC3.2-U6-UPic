@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import Firebase
 
 class GalleryCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CellTitled {
     
@@ -15,6 +16,12 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     var titleForCell: String = ""
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
+    
+    var imageURL: [URL] = []
+    
+    let storage = FIRStorage.storage()
+    // Create a reference with an initial file path and name
+  
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
