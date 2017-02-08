@@ -158,6 +158,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         for j in 0..<assets.count {
             if assets[j].mediaType == .image {
                 returnAssets.append(assets[j])
+      
             }
         }
         return returnAssets
@@ -168,18 +169,22 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let options = PHFetchOptions()
         let sort = NSSortDescriptor(key: "startDate", ascending: false)
         options.sortDescriptors = [sort]
-        //        let cutoffDate = NSDate(timeIntervalSinceNow: 60 * 60 * 24 * 30 * -1)
-        //        let predicate = NSPredicate(format: "startDate > %@", cutoffDate)
-        //       options.predicate = predicate
+//        let cutoffDate = NSDate(timeIntervalSinceNow: 60 * 60 * 24 * 30 * 12 * 2 * -1)
+//        let predicate = NSPredicate(format: "startDate > %@", cutoffDate)
+//        options.predicate = predicate
         
         let momentsLists = PHCollectionList.fetchMomentLists(with: .momentListCluster, options: nil)
-        for i in 0..<momentsLists.count {
+        for i in (0..<momentsLists.count).reversed() {
             let moments = momentsLists[i]
             let collectionList = PHCollectionList.fetchCollections(in: moments, options:options)
             for j in 0..<collectionList.count {
                 if let collection = collectionList[j] as? PHAssetCollection {
                     
                     assetsArr += getAssets(collection: collection)
+                    
+                    if assetsArr.count > 200 {
+                        break
+                    }
                 }
             }
         }
@@ -205,6 +210,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         if collectionView == self.imagesCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCollectionViewCell
+            cell.collectionImageView.image = nil
             
             manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0),
                                  contentMode: .aspectFill,options: nil) { (result, _) in
@@ -219,6 +225,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: topCollectionViewIdentifier, for: indexPath) as! TopCollectionViewCell
             
             cell.frame.size = topImagesCollectionView.frame.size
+            cell.imageView.image = nil
             
             manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0),
                                  contentMode: .aspectFill,options: nil) { (result, _) in
@@ -234,7 +241,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
         if scrollView == imagesCollectionView {
-
+            
             for _ in imagesCollectionView.visibleCells {
                 let indexPath = self.imagesCollectionView.indexPathsForVisibleItems
                 topImagesCollectionView.scrollToItem(at: indexPath[1], at: .centeredHorizontally, animated: false)
@@ -274,17 +281,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-         topImagesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        topImagesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         let asset = assetsArr[indexPath.row]
         let manager = PHImageManager.default()
         manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0), contentMode: .aspectFit, options: nil) { (result, _)  in
             //uploading the selected photo to the database
             
-          
+            
             //dump(result)
         }
         
-      
+        
     }
     
     internal lazy var topContainerView: UIView! = {
