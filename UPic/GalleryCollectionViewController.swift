@@ -20,6 +20,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     var imageURL: [URL] = []
     
     let storage = FIRStorage.storage()
+    var ref: FIRDatabaseReference!
     // Create a reference with an initial file path and name
   
     
@@ -27,6 +28,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewHierarchy()
+        getImages()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -65,6 +67,63 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         }
     }
     
+    
+    func getImages() {
+        
+        ref = FIRDatabase.database().reference()
+        
+        let storageRef = storage.reference(forURL: "https://firebasestorage.googleapis.com/v0/b/upic-a2216.appspot.com/o")
+
+        let imagesRef = storageRef.child("NATURE/")
+        
+       
+        // let imagesRef = storageRef.child("NATURE/00E52E7C-5935-432C-A6A9-3BCD7B00C8CA.png")
+        //gs://upic-a2216.appspot.com/
+       
+       // let starsRef = storageRef.child("images/stars.jpg")
+        
+        let child = imagesRef.child("")
+        // Fetch the download URL
+        
+        let userID = FIRAuth.auth()?.currentUser?.uid
+        let archi = ref.child("categories").child("ARCHITECTURE")
+        let query = archi.queryOrderedByValue()
+
+
+//        
+//        [specificPet observeEventType:FEventTypeChildAdded withBlock:^(FIRDataSnapshot *snapshot) {
+//        NSDictionary *dict = snapshot.value;
+//        NSString *key = snapshot.key;
+//        
+//        NSLog(@"key = %@ for child %@", key, dict);
+//        }];
+//
+        
+       
+  
+//        child.downloadURL { url, error in
+//            if let error = error {
+//                print(error)
+//                // Handle any errors
+//            } else {
+//                print(url)
+//                // Get the download URL for 'images/stars.jpg'
+//            }
+//        }
+        
+    
+        // Child references can also take paths delimited by '/'
+        // spaceRef now points to "images/space.jpg"
+        // imagesRef still points to "images"
+       // var spaceRef = storageRef.child("images/space.jpg")
+        
+        // This is equivalent to creating the full reference
+        //let storagePath = "\(your_firebase_storage_bucket)/images/space.jpg"
+        //spaceRef = storage.reference(forURL: storagePath)
+        
+        
+        
+    }
     /*
     // MARK: - Navigation
 
