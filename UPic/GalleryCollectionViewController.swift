@@ -17,7 +17,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
     let ref = FIRDatabase.database().reference()
-    var imagesToLoad = [URL]()
+    var imagesToLoad = [Data]()
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -33,7 +33,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -65,20 +64,22 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     
     // MARK: - Firebase Storage - Download Images
     func loadCollectionImages() {
-        //        let storageRef = storage.reference(forURL: "https://firebasestorage.googleapis.com/v0/b/upic-a2216.appspot.com/o")
         
         ref.child("categories").child("WOOFS & MEOWS").observeSingleEvent(of: .value, with: { (snapshot) in
             
-            if let value = snapshot.value as? NSDictionary {
-                for each in value {
+            if let photos = snapshot.value as? NSDictionary {
+                
+                for each in photos {
                     guard let imgURL = URL(string: each.value as! String) else { continue }
-                    self.imagesToLoad.append(imgURL)
-                    print(self.imagesToLoad.count)
+                    if let data = NSData(contentsOf: imgURL) {
+                        self.imagesToLoad.append(data as Data)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.colView.reloadData()
+                    }
                 }
                 
-                DispatchQueue.main.async {
-                    self.colView.reloadData()
-                }
             }
         }) { (error) in
             print(error.localizedDescription)
@@ -109,8 +110,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
         
-        cell.backgroundColor = ColorPalette.lightPrimaryColor
-        cell.imageView.image = imagesToLoad[indexPath.row]
+        cell.imageView.image = UIImage(data: imagesToLoad[indexPath.row])
+
+        cell.textLabel.text = String(describing: imagesToLoad[indexPath.row])
         
         return cell
     }

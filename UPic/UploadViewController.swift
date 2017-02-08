@@ -156,31 +156,31 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
         let imageName = NSUUID().uuidString
         let user = FIRAuth.auth()?.currentUser
-       
+        
         if user?.uid != nil {
-       
+            
             let storageRef = FIRStorage.storage().reference().child("\(self.titleTextField.text!).png")
-       
+            
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
-            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
-                if error != nil {
-                    print(error)
-                }
-               
-//                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
-                
+                storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                    if error != nil {
+                        print(error)
+                    }
+                    
+                    //                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
+                    
                     FIRDatabase.database().reference().child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
-
-                                FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
-                metadata?.customMetadata = [
-                    "upvotes": "0",
-                    "downvotes": "0"
-                ]
-                
-                print((String(describing: metadata!.downloadURL()!))
-)
-                
-            })
+                    
+                    FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
+                    metadata?.customMetadata = [
+                        "upvotes": "0",
+                        "downvotes": "0"
+                    ]
+                    
+                    print((String(describing: metadata!.downloadURL()!)))
+                    
+                })
+            }
         }
         else {
             let alert = UIAlertController(title: "Error", message: "You need to log in to upload images", preferredStyle: .alert)
@@ -189,6 +189,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             self.present(alert, animated: true, completion: nil)
         }
     }
+    
     func getAssets(collection: PHAssetCollection) -> [PHAsset] {
         
         let assets = PHAsset.fetchAssets(in: collection, options: nil)
