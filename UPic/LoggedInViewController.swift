@@ -110,7 +110,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             }
             
         })
-
+        print(self.picArray.count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
