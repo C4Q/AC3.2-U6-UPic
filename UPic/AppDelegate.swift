@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 
         
-        if let font = UIFont(name: "Noteworthy", size: 20) {
+        if let font = UIFont(name: "Optima", size: 20) {
             UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: font,
                                                                 NSForegroundColorAttributeName : UIColor.white]
         }
