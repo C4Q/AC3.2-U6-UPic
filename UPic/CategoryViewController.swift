@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 
 private enum GallerySections: String {
-    case woofmeow = "Woofs & Meows"
-    case nature = "Nature"
-    case architecture = "Architecture"
+    case woofmeow = "WOOFS & MEOWS"
+    case nature = "NATURE"
+    case architecture = "ARCHITECTURE"
     
     static let sections: [String] = [GallerySections.woofmeow,
                                      GallerySections.nature,
@@ -108,8 +108,11 @@ class CategoryViewController: UITableViewController, CellTitled {
 //            navigationController?.pushViewController(avc, animated: true)
 //        }
         let galleryVC = GalleryCollectionViewController()
+        galleryVC.titleForCell = GallerySections.sections[indexPath.section]
         navigationController?.pushViewController(galleryVC, animated: true)
-        
+        let backItem = UIBarButtonItem()
+        backItem.title = ""
+        navigationItem.backBarButtonItem = backItem
     }
     
         

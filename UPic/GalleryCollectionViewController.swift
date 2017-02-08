@@ -7,32 +7,24 @@
 //
 
 import UIKit
+import SnapKit
 
-
-class GalleryCollectionViewController: UICollectionViewController {
+class GalleryCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CellTitled {
     
     // MARK: - Properties
+    var titleForCell: String = ""
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Preserve selection between presentations
-         self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
-        layout.itemSize = CGSize(width: 90, height: 120)
-        self.collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-        self.view.addSubview(colView)
-        self.collectionView?.delegate   = self
-        self.collectionView?.dataSource = self
-        self.collectionView!.register(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        view.backgroundColor = UIColor.white
+        setupViewHierarchy()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureConstraints()
     }
     
     override func didReceiveMemoryWarning() {
@@ -40,6 +32,32 @@ class GalleryCollectionViewController: UICollectionViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    internal func setupViewHierarchy() {
+        self.edgesForExtendedLayout = []
+        
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: view.frame.width / 2, height: view.frame.height/3)
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
+        
+        colView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        colView.delegate = self
+        colView.dataSource = self
+        colView.register(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "GalleryCell")
+        colView.backgroundColor = ColorPalette.primaryColor
+        
+        self.navigationController?.navigationBar.tintColor = ColorPalette.accentColor
+        self.title = titleForCell
+        
+        view.addSubview(colView)
+    }
+
+    internal func configureConstraints() {
+        colView.snp.makeConstraints { (make) in
+            make.leading.top.trailing.bottom.equalToSuperview()
+        }
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -52,19 +70,19 @@ class GalleryCollectionViewController: UICollectionViewController {
 
     // MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 1
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
     
-        cell.backgroundColor = .red
+        cell.backgroundColor = ColorPalette.lightPrimaryColor
     
         return cell
     }

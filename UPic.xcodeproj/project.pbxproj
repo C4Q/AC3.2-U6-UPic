@@ -114,8 +114,8 @@
 		47E4E53F1E4A397600C5FDBF /* Gallery View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				47E4E5401E4A553E00C5FDBF /* CategoryTableViewCell.swift */,
-				47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */,
+				47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */,
+				47E4E5451E4A63D400C5FDBF /* GalleryCollectionViewController.swift */,
 				47E4E5421E4A554200C5FDBF /* Gallery Views */,
 			);
 			name = "Gallery View Controllers";
@@ -124,8 +124,8 @@
 		47E4E5421E4A554200C5FDBF /* Gallery Views */ = {
 			isa = PBXGroup;
 			children = (
-				47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */,
-				47E4E5451E4A63D400C5FDBF /* GalleryCollectionViewController.swift */,
+				47E4E5401E4A553E00C5FDBF /* CategoryTableViewCell.swift */,
+				47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */,
 			);
 			name = "Gallery Views";
 			sourceTree = "<group>";
