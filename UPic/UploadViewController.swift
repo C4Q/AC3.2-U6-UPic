@@ -158,7 +158,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let user = FIRAuth.auth()?.currentUser
         if user?.uid != nil {
        
-            let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
+            let storageRef = FIRStorage.storage().reference().child("\(self.titleTextField.text!).png")
        
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
             storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
@@ -166,18 +166,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print(error)
                 }
                
-                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
+//                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
                 
                     FIRDatabase.database().reference().child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
 
-                //(String(describing: metadata!.downloadURL()!))
-                FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
-//
+                                FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
                 metadata?.customMetadata = [
                     "upvotes": "0",
                     "downvotes": "0"
                 ]
-                print(metadata!.customMetadata)
+                
+                print((String(describing: metadata!.downloadURL()!))
+)
                 
             })
         }

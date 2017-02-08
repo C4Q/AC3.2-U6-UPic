@@ -17,7 +17,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
     let bottomCollectionViewNibName = "ImagesCollectionViewCell"
     var imagesCollectionView: UICollectionView!
+    
     var userReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
+    
+    
     var picArray = [UIImage]()
     
     override func viewDidLoad() {
@@ -27,6 +30,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.navigationItem.hidesBackButton = true
         self.navigationItem.rightBarButtonItem = editButtonItem
         self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
+        dump(self.userReference)
+        dump(FIRStorage.storage().reference())
+        downloadImages()
      }
     
 
@@ -85,28 +91,34 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return picArray.count
+        print(self.picArray.count)
+        return self.picArray.count
+    }
+    
+    func downloadImages() {
+        self.userReference.observe(.childAdded, with: { (snapshot) in
+            // Get download URL from snapshot
+            let downloadURL = snapshot.value as! String
+            dump("This is download URL \(downloadURL)")
+            // Create a storage reference from the URL
+            let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
+            // Download the data, assuming a max size of 1MB (you can change this as necessary)
+            storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                // Create a UIImage, add it to the array
+                let pic = UIImage(data: data!)
+                self.picArray.append(pic!)
+            }
+            
+        })
+
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCollectionViewCell
         cell.collectionImageView.image = nil
+        cell.collectionImageView.image = self.picArray[indexPath.row]
+        cell.setNeedsLayout()
         
-        self.userReference.observe(.childAdded, with: { (snapshot) in
-            // Get download URL from snapshot
-            let downloadURL = snapshot.value as! String
-            // Create a storage reference from the URL
-            let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
-            // Download the data, assuming a max size of 1MB (you can change this as necessary)
-            storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
-                // Create a UIImage, add it to the array
-                let pic = UIImage(data: data!)
-                self.picArray.append(pic!)
-                cell.setNeedsLayout()
-            }
-            cell.collectionImageView.image = self.picArray[indexPath.row]
-        
-        })
         return cell
     }
 
