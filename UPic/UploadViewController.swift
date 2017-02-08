@@ -28,6 +28,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     var assetsArr: [PHAsset] = []
     var selectedSegment: Catagory = .animals
     var selectedIndex = 0
+    var selectedImage: UIImage?
     
     let reuseIdentifier = "imagesCellIdentifier"
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
@@ -151,9 +152,30 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     internal func didTapUpload(sender: UIButton) {
-        print("Upload Tapped")
+        print("From upload, users UID \(FIRAuth.auth()?.currentUser?.uid)")
+        print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
+        let imageName = NSUUID().uuidString
+        let user = FIRAuth.auth()?.currentUser
+        if user?.uid != nil {
+        let storageRef = FIRStorage.storage().reference().child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).child("\(imageName).png")
+        if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
+            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                if error != nil {
+                    print(error)
+                }
+               
+//                FIRDatabase.database().reference().child("users").child((user?.uid)!).updateChildValues(["uploadedImages": [String(describing: metadata!.downloadURL()!)]])
+                
+            })
+        }
     }
-    
+        else {
+            let alert = UIAlertController(title: "Error", message: "You need to log in to upload images", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
     func getAssets(collection: PHAssetCollection) -> [PHAsset] {
         
         let assets = PHAsset.fetchAssets(in: collection, options: nil)
@@ -218,6 +240,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0),
                                  contentMode: .aspectFill,options: nil) { (result, _) in
                                     cell.collectionImageView.image = result
+                                    self.selectedImage = result
                                     cell.setNeedsLayout()
                                     
             }
@@ -233,6 +256,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0),
                                  contentMode: .aspectFill,options: nil) { (result, _) in
                                     cell.imageView.image = result
+                                    self.selectedImage = result
                                     cell.setNeedsLayout()
             }
             return cell
