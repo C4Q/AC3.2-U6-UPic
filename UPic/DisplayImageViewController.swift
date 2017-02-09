@@ -15,6 +15,7 @@ class DisplayImageViewController: UIViewController {
 
     var image: UIImage!
     var imageUrl: URL!
+    var ref: FIRStorageReference!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,27 +62,40 @@ class DisplayImageViewController: UIViewController {
          let storageRef = FIRStorage.storage().reference()
         // Create reference to the file whose metadata we want to change
        // let forestRef = storageRef.child("\(imageUrl!)")
-        let forestRef = storageRef.child("https://firebasestorage.googleapis.com/v0/b/upic-a2216.appspot.com/o/0A689152-7D7F-4529-BC82-1EF1D72B48E0.png?alt=media&token=6eee630a-dce4-40c6-af5d-f88fcec28f9e")
+//        let theRef = ref
         
        // let stuff = storageRef.
         // Create file metadata to update
-        let newMetadata = FIRStorageMetadata()
-        newMetadata.cacheControl = "public,max-age=300";
-        newMetadata.contentType = "image/jpeg";
+//        let newMetadata = FIRStorageMetadata()
+//        newMetadata.cacheControl = "public,max-age=300";
+//        newMetadata.contentType = "image/jpeg";
+      //  let data = newMetadata.customMetadata?.updateValue("", forKey: "")
         
+     
         // Update metadata properties
-        forestRef.update(newMetadata) { metadata, error in
+        
+       // print(ref)
+    
+        ref.metadata { (metaData, error) in
             if let error = error {
-                // Uh-oh, an error occurred!
-            print("Error ----- \(error.localizedDescription)")
-                
-            } else {
-                // Updated metadata for 'images/forest.jpg' is returned
-                let value = String(newMetadata.value(forKeyPath: "upvotes") as! Int + 1)
-                newMetadata.setValue(value, forKey: "upvotes")
-                
+                print("Error ----- \(error.localizedDescription)")
+            }
+            else {
+                dump(metaData!.value(forKey: "Name"))
             }
         }
+//        ref.update(newMetadata) { metadata, error in
+//            if let error = error {
+//                // Uh-oh, an error occurred!
+//            print("Error ----- \(error.localizedDescription)")
+//                
+//            } else {
+//                // Updated metadata for 'images/forest.jpg' is returned
+//                let value = String(newMetadata.value(forKeyPath: "upvotes") as! Int + 1)
+//                newMetadata.setValue(value, forKey: "upvotes")
+//                
+//            }
+//        }
         
     }
     

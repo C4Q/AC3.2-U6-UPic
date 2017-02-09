@@ -20,6 +20,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let ref = FIRDatabase.database().reference()
     var imageURLs: [URL] = []
     var imagesToLoad = [UIImage]()
+    var refArr: [FIRStorageReference] = []
     var category: GallerySections!
     
     
@@ -77,6 +78,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             dump("This is download URL \(downloadURL)")
             self.imageURLs.append(URL(string: downloadURL)!)
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
+            self.refArr.append(storageRef)
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
             storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array
@@ -130,6 +132,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         let displayImageVC = DisplayImageViewController()
         displayImageVC.image = self.imagesToLoad[indexPath.row]
         displayImageVC.imageUrl = self.imageURLs[indexPath.row]
+        displayImageVC.ref = self.refArr[indexPath.row]
         self.navigationController?.pushViewController(displayImageVC, animated: false)
 
     }
