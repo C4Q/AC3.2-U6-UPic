@@ -9,20 +9,7 @@
 import UIKit
 import SnapKit
 import Firebase
-
-private enum GallerySections: String {
-    case woofmeow = "WOOFS & MEOWS"
-    case nature = "NATURE"
-    case architecture = "ARCHITECTURE"
-    
-    static let sections: [String] = [GallerySections.woofmeow,
-                                     GallerySections.nature,
-                                     GallerySections.architecture].map { $0.rawValue }
-    
-    static func numberOfGallerySections() -> Int {
-        return GallerySections.sections.count
-    }
-}
+import FirebaseStorage
 
 class CategoryViewController: UITableViewController, CellTitled {
     
@@ -109,6 +96,7 @@ class CategoryViewController: UITableViewController, CellTitled {
 //        }
         let galleryVC = GalleryCollectionViewController()
         galleryVC.titleForCell = GallerySections.sections[indexPath.section]
+        galleryVC.category = GallerySections(rawValue: GallerySections.sections[indexPath.section])
         navigationController?.pushViewController(galleryVC, animated: true)
         let backItem = UIBarButtonItem()
         backItem.title = ""
