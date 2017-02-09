@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3E287A4C1E4CDD6B00512F41 /* DisplayImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E287A4B1E4CDD6B00512F41 /* DisplayImageViewController.swift */; };
-		3E5BE0521E49227800DFE32F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3E5BE0511E49227800DFE32F /* GoogleService-Info.plist */; };
 		3E5BE0541E49278600DFE32F /* LoggedInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5BE0531E49278600DFE32F /* LoggedInViewController.swift */; };
 		3EF2F3DD1E4A1E9A00F0AF81 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */; };
 		3EF2F3E01E4B6E9B00F0AF81 /* TopCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2F3DE1E4B6E9B00F0AF81 /* TopCollectionViewCell.swift */; };
@@ -27,12 +25,12 @@
 		47E4E54B1E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */; };
 		47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */; };
 		47E4E5511E4CF95F00C5FDBF /* DisplayImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5501E4CF95F00C5FDBF /* DisplayImageViewController.swift */; };
+		47E4E5531E4D2E5A00C5FDBF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E5521E4D2E5A00C5FDBF /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2080776EE322A11A720DFC3E /* Pods-UPic.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPic.release.xcconfig"; path = "Pods/Target Support Files/Pods-UPic/Pods-UPic.release.xcconfig"; sourceTree = "<group>"; };
 		3E287A4B1E4CDD6B00512F41 /* DisplayImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayImageViewController.swift; sourceTree = "<group>"; };
-		3E5BE0511E49227800DFE32F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3E5BE0531E49278600DFE32F /* LoggedInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedInViewController.swift; sourceTree = "<group>"; };
 		3EF2F3DC1E4A1E9A00F0AF81 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		3EF2F3DE1E4B6E9B00F0AF81 /* TopCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -52,6 +50,7 @@
 		47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesCollectionViewCell.swift; sourceTree = "<group>"; };
 		47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesCollectionViewCell.xib; sourceTree = "<group>"; };
 		47E4E5501E4CF95F00C5FDBF /* DisplayImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayImageViewController.swift; sourceTree = "<group>"; };
+		47E4E5521E4D2E5A00C5FDBF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BF106418BB9E589B63A2D021 /* Pods-UPic.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPic.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UPic/Pods-UPic.debug.xcconfig"; sourceTree = "<group>"; };
 		DE930EC10FFB37EBCC6B7EEC /* Pods_UPic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UPic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -114,7 +113,7 @@
 				47E4E5211E48E6F700C5FDBF /* Assets.xcassets */,
 				47E4E5231E48E6F700C5FDBF /* LaunchScreen.storyboard */,
 				47E4E5261E48E6F700C5FDBF /* Info.plist */,
-				3E5BE0511E49227800DFE32F /* GoogleService-Info.plist */,
+				47E4E5521E4D2E5A00C5FDBF /* GoogleService-Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -245,7 +244,7 @@
 				47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */,
 				47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */,
 				3EF2F3E11E4B6E9B00F0AF81 /* TopCollectionViewCell.xib in Resources */,
-				3E5BE0521E49227800DFE32F /* GoogleService-Info.plist in Resources */,
+				47E4E5531E4D2E5A00C5FDBF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
