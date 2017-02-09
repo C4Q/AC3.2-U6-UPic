@@ -162,28 +162,41 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
 //            })
 //        })
 //        
-//        propertyAnimator?.addAnimations ({
-//            
-//            self.UPicLogo.snp.remakeConstraints({ (make) in
-//                make.size.equalTo(CGSize(width: 175.0, height: 175.0))
-//                make.centerX.equalToSuperview()
-//                make.top.equalToSuperview().offset(40.0)
-//            })
-//            }, delayFactor: 3.0)
         
+
         
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: .autoreverse, animations: {
         
-        UIView.animate(withDuration: 1.0, delay: 0.0, options: .autoreverse, animations: {
-            
-            self.UPicLogo.transform = CGAffineTransform(scaleX: 0.2, y: 0.2)
-            self.UPicLogo.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-            
-            },
-                       completion: { finished in
-                        
-                        self.UPicLogo.transform = CGAffineTransform.identity
+            let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
+            let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
+            let combined = scale.concatenating(rotation)
+            self.UPicLogo.transform = combined
+            }, completion: { finished in
+                self.UPicLogo.transform = CGAffineTransform.identity
             }
         )
+
+        UIView.animate(withDuration: 0.15, delay: 0.15, animations: {
+            self.view.backgroundColor = .white
+        }, completion: {
+            finished in
+            self.view.backgroundColor = ColorPalette.primaryColor
+        })
+        
+//        let logoAnimator = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut) {
+//            self.UPicLogo.transform = CGAffineTransform.identity
+//        }
+//        
+//        logoAnimator.addAnimations({
+//            self.UPicLogo.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+//            }, delayFactor: 1.3)
+//        
+//        logoAnimator.addAnimations({
+//            self.UPicLogo.transform = CGAffineTransform.identity
+//            }, delayFactor: 2.7)
+//        
+//        
+//        logoAnimator.startAnimation()
         
         self.view.layoutIfNeeded()
     }
