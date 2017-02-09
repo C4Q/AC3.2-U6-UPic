@@ -24,7 +24,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     var imagesCollectionView: UICollectionView!
     var topImagesCollectionView: UICollectionView!
     //var catagories: [Catagory] = [.animals, .nature, .architecture]
-    var catagories: [String] = [Catagory.animals, Catagory.nature, Catagory.architecture].map{ $0.rawValue }
+    var catagories = ["WOOFS & MEOWS","NATURE", "ARCHITECTURE" ]
     var assetsArr: [PHAsset] = []
     var selectedSegment: Catagory = .animals
     var selectedIndex = 0
@@ -151,66 +151,37 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
     }
     
-    /*
-    let storage = FIRStorage.storage()
-    let data: NSData = myImageData
-    let userProfilePic =
-    let userProfilePic = storageRef.child("users/abc/profileimage.jpg")
-    
-    let uploadTask = userProfilePic.putData(data, metadata: nil) { metadata, error in
-        if (error != nil) {
-            // Uh-oh, an error occurred!
-        } else {
-            let downloadURL = metadata!.downloadURL
-            // store downloadURL in db
-            storeUserProfileInDB(downloadURL)
-        }
-    }
-    
-    func storeUserProfileInDB(profileImgUrl: NSURL) {
-        let ref = FIRDatabase.database().reference()
-        let key = ref.child("users").childByAutoId().key
-        
-        let dictionaryUser = [ "userName"    : name! ,
-                               "imageUrl" : profileImgUrl.absoluteString,
-                               ]
-        
-        let childUpdates = ["/users/\(key)": dictionaryTodo]
-        ref.updateChildValues(childUpdates, withCompletionBlock: { (error, ref) -> Void in
-            //save
-        })
-        
-    }
-    */
     internal func didTapUpload(sender: UIButton) {
         print("From upload, users UID \(FIRAuth.auth()?.currentUser?.uid)")
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
         let imageName = NSUUID().uuidString
         let user = FIRAuth.auth()?.currentUser
         if user?.uid != nil {
-        let storageRef = FIRStorage.storage().reference().child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).child("\(imageName).png")
-        if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
-            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
-                if error != nil {
-                    print(error)
-                }
-               
-                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
-                
-                    FIRDatabase.database().reference().child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues(["hello": String(describing: metadata!.downloadURL()!)])
-
-                //(String(describing: metadata!.downloadURL()!))
-//                FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([autoKey: String(describing: metadata!.downloadURL()!)])
-//
-                metadata?.customMetadata = [
-                    "upvotes": "0",
-                    "downvotes": "0"
-                ]
-                print(metadata!.customMetadata)
-                
-            })
+            
+            let storageRef = FIRStorage.storage().reference().child("\(self.titleTextField.text!).png")
+            
+            if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
+                storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                    if error != nil {
+                        print(error)
+                    }
+                    
+                    //                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
+                    
+                    FIRDatabase.database().reference().child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
+                    
+                    //(String(describing: metadata!.downloadURL()!))
+                    FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
+                    //
+                    metadata?.customMetadata = [
+                        "upvotes": "0",
+                        "downvotes": "0"
+                    ]
+                    print(metadata!.customMetadata)
+                    
+                })
+            }
         }
-    }
         else {
             let alert = UIAlertController(title: "Error", message: "You need to log in to upload images", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
