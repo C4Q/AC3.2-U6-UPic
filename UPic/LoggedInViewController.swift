@@ -114,7 +114,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
                 self.imagesCollectionView.reloadData()
                 }
             }
-            
         })
         print(self.picArray.count)
     }
