@@ -17,7 +17,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
     let bottomCollectionViewNibName = "ImagesCollectionViewCell"
     var imagesCollectionView: UICollectionView!
-
+    
     
     var userReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
     
@@ -35,11 +35,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         dump(FIRStorage.storage().reference())
         downloadImages()
         //imagesCollectionView.clearsSelectionOnViewWillAppear = false
-     }
+    }
     
-
+    
     func configureConstraints() {
-               // Buttons
+        // Buttons
         logoutButton.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
         }
@@ -50,7 +50,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         
     }
-    
     func setupViewHierarchy() {
         self.edgesForExtendedLayout = []
         self.view.backgroundColor = ColorPalette.primaryColor
@@ -58,22 +57,22 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         createBottomCollectionView()
         view.addSubview(logoutButton)
         view.addSubview(imagesCollectionView)
-
+        
         
         logoutButton.addTarget(self, action: #selector(didTapLogout(sender:)), for: .touchUpInside)
         
     }
     
     func didTapLogout(sender: UIButton) {
-      
-            do {
-                try FIRAuth.auth()?.signOut()
-                _ = self.navigationController?.popViewController(animated: true)
-            }
-            catch {
-                print(error)
-            }
+        
+        do {
+            try FIRAuth.auth()?.signOut()
+            _ = self.navigationController?.popViewController(animated: true)
         }
+        catch {
+            print(error)
+        }
+    }
     
     func createBottomCollectionView() {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -124,14 +123,14 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCollectionViewCell
         cell.collectionImageView.image = nil
         
-            cell.collectionImageView.image = self.picArray[indexPath.row]
-            cell.setNeedsLayout()
-
+        cell.collectionImageView.image = self.picArray[indexPath.row]
+        cell.setNeedsLayout()
+        
         
         return cell
     }
-
-
+    
+    
     // MARK: - Lazy Instantiates
     
     // Buttons
@@ -147,5 +146,5 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
         return button
     }()
-
+    
 }
