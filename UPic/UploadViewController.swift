@@ -45,7 +45,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         configureConstraints()
         
         getMoments()
-        //progressContainerView.isHidden = true
+        progressContainerView.isHidden = true
     }
     
     func setupViewHierarchy() {
@@ -76,9 +76,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         self.scrollView.addSubview(catogorySegmentedControl)
         
-        self.topImagesCollectionView.addSubview(progressContainerView)
+        self.view.addSubview(progressContainerView)
         self.progressContainerView.addSubview(progressBar)
         self.progressContainerView.addSubview(progressLabel)
+        
         
     }
     
@@ -180,6 +181,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     internal func didTapUpload(sender: UIButton) {
+        progressContainerView.isHidden = false
         print("From upload, users UID \(FIRAuth.auth()?.currentUser?.uid)")
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
         let imageName = NSUUID().uuidString
@@ -211,7 +213,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 })
                 
                 let observer = task.observe(.progress){ (snapshot) in
-                    print(snapshot.progress)
+                    
+                    let progress = Float((snapshot.progress?.fractionCompleted)!)
+                    if progress == 1.0 {
+                        self.progressBar.isHidden = true
+                        self.progressLabel.text = "SUCCESS!"
+                    }
+                    
+                    self.progressBar.progress = progress
+                    dump(snapshot.progress)
                 }
             }
         }
@@ -315,6 +325,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
+        progressContainerView.isHidden = true
+        
         if scrollView == imagesCollectionView {
             
             for _ in imagesCollectionView.visibleCells {
@@ -357,6 +369,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         topImagesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        progressContainerView.isHidden = true
         //        let asset = assetsArr[indexPath.row]
         //        let manager = PHImageManager.default()
         //        manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0), contentMode: .aspectFit, options: nil) { (result, _)  in
@@ -390,8 +403,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     internal lazy var progressBar: UIProgressView! = {
         let progressView = UIProgressView()
-        // progressView.tintColor = ColorPalette.accentColor
-        progressView.backgroundColor = .red
+        progressView.tintColor = ColorPalette.accentColor
         return progressView
     }()
     
