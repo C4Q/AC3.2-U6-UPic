@@ -107,15 +107,12 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
             storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array
-                if let data = data {
-                    let pic = UIImage(data: data)
-                    self.picArray.append(pic!)
-                    DispatchQueue.main.async {
-                        self.imagesCollectionView.reloadData()
-                    }
+                let pic = UIImage(data: data)
+                self.picArray.append(pic!)
+                DispatchQueue.main.async {
+                    self.imagesCollectionView.reloadData()
                 }
             }
-            
         })
         print(self.picArray.count)
     }
