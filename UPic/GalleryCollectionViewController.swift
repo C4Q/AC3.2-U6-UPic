@@ -8,7 +8,8 @@
 
 import UIKit
 import SnapKit
-import FirebaseDatabase
+import Firebase
+import FirebaseStorage
 
 class GalleryCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CellTitled {
     
@@ -17,13 +18,15 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
     let ref = FIRDatabase.database().reference()
-    var imagesToLoad = [Data]()
+    var imagesToLoad = [UIImage]()
+    var category: GallerySections!
+    
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewHierarchy()
-        loadCollectionImages()
+        loadCollectionImages(category: category)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,27 +66,30 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     }
     
     // MARK: - Firebase Storage - Download Images
-    func loadCollectionImages() {
+    func loadCollectionImages(category: GallerySections) {
         
-        ref.child("categories").child("WOOFS & MEOWS").observeSingleEvent(of: .value, with: { (snapshot) in
+        let userReference = FIRDatabase.database().reference().child("categories").child(category.rawValue)
+        print(userReference)
+        userReference.observe(.childAdded, with: { (snapshot) in
             
-            if let photos = snapshot.value as? NSDictionary {
-                
-                for each in photos {
-                    guard let imgURL = URL(string: each.value as! String) else { continue }
-                    if let data = NSData(contentsOf: imgURL) {
-                        self.imagesToLoad.append(data as Data)
-                    }
+            let downloadURL = snapshot.value as! String
+            dump("This is download URL \(downloadURL)")
+            
+            let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
+            // Download the data, assuming a max size of 1MB (you can change this as necessary)
+            storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                // Create a UIImage, add it to the array
+                if let data = data {
+                    let pic = UIImage(data: data)
+                    self.imagesToLoad.append(pic!)
                     
                     DispatchQueue.main.async {
                         self.colView.reloadData()
                     }
                 }
-                
             }
-        }) { (error) in
-            print(error.localizedDescription)
-        }
+            
+        })
     }
     
     /*
@@ -110,8 +116,8 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
         
-        cell.imageView.image = UIImage(data: imagesToLoad[indexPath.row])
-
+        cell.imageView.image = imagesToLoad[indexPath.row]
+        
         cell.textLabel.text = String(describing: imagesToLoad[indexPath.row])
         
         return cell
