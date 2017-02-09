@@ -10,11 +10,10 @@ import UIKit
 import FirebaseDatabase
 import FirebaseAuth
 
-class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate {
+class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var titleForCell = "REGISTER"
     var ref: FIRDatabaseReference!
     var activeField: UITextField?
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,12 +24,19 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
     }
 
     func configureConstraints() {
+        // Image View
+        profilePic.snp.makeConstraints { (make) in
+            make.size.equalTo(CGSize(width: 250.0, height: 200.0))
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(75.0)
+        }
+        
         // Containers
         usernameTextField.snp.makeConstraints { (make) in
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
             make.centerX.equalToSuperview()
-            make.top.equalTo(self.view.snp.top).inset(200.0)
+            make.top.equalTo(profilePic.snp.bottom).offset(100.0)
         }
         
         emailTextField.snp.makeConstraints { (make) in
@@ -64,6 +70,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
         view.addSubview(emailTextField)
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
+        view.addSubview(profilePic)
         
         doneButton.addTarget(self, action: #selector(didTapDone(sender:)), for: .touchUpInside)
         
@@ -95,7 +102,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
                         "password": self.passwordTextField.text,
                         "username": self.usernameTextField.text,
                         "email" : self.emailTextField.text,
-                       // "uploadedimages": ["", ""]
                         ])
                  }
                 else {
@@ -108,9 +114,33 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
         }
      self.dismiss(animated: true, completion: nil)
            }
-
+    
+    
+    // Handler Function for picking profile pic
+    func pickProfileImage() {
+        let picker = UIImagePickerController()
+        present(picker, animated: true, completion: nil)
+        picker.delegate = self
+    }
+    
+   // MARK: - Image Picker Delegate Method
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        dump(info)
+        self.profilePic.image = info["UIImagePickerControllerOriginalImage"] as! UIImage?
+        dismiss(animated: true, completion: nil)
+    }
 
     // MARK: - Lazy Instantiates
+    // Image View
+    lazy var profilePic: UIImageView = {
+        let profilePic = UIImageView()
+        profilePic.image = #imageLiteral(resourceName: "user_icon")
+        profilePic.contentMode = .scaleAspectFit
+        profilePic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickProfileImage)))
+        profilePic.isUserInteractionEnabled = true
+        
+        return profilePic
+    }()
     
     // Buttons
     internal lazy var doneButton: UIButton = {
@@ -154,8 +184,4 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
         textField.isSecureTextEntry = true
         return textField
     }()
-
-    
-
-
 }
