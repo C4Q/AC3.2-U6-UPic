@@ -50,8 +50,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         
     }
-    
-    
     func setupViewHierarchy() {
         self.edgesForExtendedLayout = []
         self.view.backgroundColor = ColorPalette.primaryColor
@@ -98,6 +96,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func downloadImages() {
+       
         self.userReference.observe(.childAdded, with: { (snapshot) in
             // Get download URL from snapshot
             let downloadURL = snapshot.value as! String
@@ -105,12 +104,14 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             // Create a storage reference from the URL
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
-            storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+            storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array
-                let pic = UIImage(data: data!)
-                self.picArray.append(pic!)
                 DispatchQueue.main.async {
-                    self.imagesCollectionView.reloadData()
+                if let data = data {
+                let pic = UIImage(data: data)
+                self.picArray.append(pic!)
+                }
+                self.imagesCollectionView.reloadData()
                 }
             }
         })
