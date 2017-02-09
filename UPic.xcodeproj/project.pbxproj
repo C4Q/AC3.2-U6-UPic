@@ -24,8 +24,10 @@
 		47E4E5481E4A63F500C5FDBF /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */; };
 		47E4E54B1E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */; };
 		47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */; };
+
 		9B0ED0241E4C1A53008868B5 /* DisplayImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0ED0231E4C1A53008868B5 /* DisplayImageViewController.swift */; };
 		9B138DFF1E4D22BF00F60338 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B138DFE1E4D22BF00F60338 /* GoogleService-Info.plist */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,8 +51,10 @@
 		47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesCollectionViewCell.swift; sourceTree = "<group>"; };
 		47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesCollectionViewCell.xib; sourceTree = "<group>"; };
+
 		9B0ED0231E4C1A53008868B5 /* DisplayImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayImageViewController.swift; sourceTree = "<group>"; };
 		9B138DFE1E4D22BF00F60338 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+
 		BF106418BB9E589B63A2D021 /* Pods-UPic.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPic.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UPic/Pods-UPic.debug.xcconfig"; sourceTree = "<group>"; };
 		DE930EC10FFB37EBCC6B7EEC /* Pods_UPic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UPic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -114,6 +118,7 @@
 				47E4E5231E48E6F700C5FDBF /* LaunchScreen.storyboard */,
 				9B138DFE1E4D22BF00F60338 /* GoogleService-Info.plist */,
 				47E4E5261E48E6F700C5FDBF /* Info.plist */,
+
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -245,6 +250,7 @@
 				9B138DFF1E4D22BF00F60338 /* GoogleService-Info.plist in Resources */,
 				47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */,
 				3EF2F3E11E4B6E9B00F0AF81 /* TopCollectionViewCell.xib in Resources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

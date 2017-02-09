@@ -48,6 +48,12 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         progressContainerView.isHidden = true
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        titleTextField.styled(placeholder: "TITLE")
+
+    }
+    
     func setupViewHierarchy() {
         
         createBottomCollectionView()
@@ -422,15 +428,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     internal lazy var titleTextField: UITextField! = {
         let textField = UITextField()
-        textField.placeholder = "TITLE"
-        
-        // textField.tintColor = ColorPalette.accentColor
-        //        var bottomLine = CALayer()
-        //        bottomLine.frame = CGRect(x: 0.0, y: textField.frame.height-1, width: textField.frame.width, height: 1.0)
-        //        bottomLine.backgroundColor = UIColor.white.cgColor
-        //        textField.borderStyle = UITextBorderStyle.none
-        //        textField.layer.addSublayer(bottomLine)
-        
         return textField
     }()
     

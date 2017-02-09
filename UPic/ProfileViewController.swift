@@ -22,7 +22,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupViewHierarchy()
         usernameTextField.delegate = self
         passwordTextField.delegate = self
@@ -31,7 +31,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.propertyAnimator = UIViewPropertyAnimator(duration: 2.0, dampingRatio: 0.75, animations: nil)
+        self.propertyAnimator = UIViewPropertyAnimator(duration: 0.8, dampingRatio: 0.75, animations: nil)
         
         configureConstraints()
     }
@@ -45,32 +45,46 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         self.addSlidingAnimationToPassword()
         self.startSlidingAnimations()
     }
-
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        usernameTextField.text = ""
+        passwordTextField.text = ""
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        usernameTextField.styled(placeholder: "username")
+        passwordTextField.styled(placeholder: "password")
+    }
+    
     // MARK: - Setup View Hierarchy & Constraints
     func setupViewHierarchy() {
         self.edgesForExtendedLayout = []
+        navigationController?.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
+        navigationController?.navigationBar.barTintColor = ColorPalette.darkPrimaryColor
+        self.navigationItem.title = titleForCell
         self.view.backgroundColor = ColorPalette.primaryColor
-        self.tabBarController?.title = titleForCell
         
         view.addSubview(UPicLogo)
         view.addSubview(usernameContainerView)
         view.addSubview(passwordContainerView)
         view.addSubview(loginButton)
         view.addSubview(registerButton)
-
+        
         usernameContainerView.addSubview(usernameTextField)
         passwordContainerView.addSubview(passwordTextField)
         
         loginButton.addTarget(self, action: #selector(didTapLogin(sender:)), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(didTapRegister(sender:)), for: .touchUpInside)
-
     }
     
     func configureConstraints() {
         // Image View
         UPicLogo.snp.makeConstraints { (make) in
-            make.size.equalTo(CGSize(width: 200.0, height: 200.0))
-            make.centerX.bottom.equalToSuperview()
+            make.size.equalTo(CGSize(width: 175.0, height: 175.0))
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(40.0)
         }
         
         // Containers
@@ -100,19 +114,21 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         }
         
         // Buttons
-        loginButton.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(registerButton.snp.top).inset(8.0)
-        }
-        
         registerButton.snp.makeConstraints { (make) in
+            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalTo(60.0)
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().inset(16.0)
         }
         
+        loginButton.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(registerButton)
+            make.bottom.equalToSuperview().inset(85.0)
+        }
     }
     
-    // MARK: Property Animations
+    // MARK: - Property Animations
     internal func addSlidingAnimationToUsername() {
         
         propertyAnimator?.addAnimations ({
@@ -143,22 +159,38 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     internal func animateLogo() {
         
-        UPicLogo.transform = CGAffineTransform(scaleX: 0.2, y: 0.2)
+        UIView.animate(withDuration: 0.25, delay: 0.0, options: .autoreverse, animations: {
         
-        propertyAnimator?.addAnimations ({
-            self.UPicLogo.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-            
-            self.UPicLogo.snp.remakeConstraints({ (make) in
-                make.size.equalTo(CGSize(width: 200.0, height: 200.0))
-                make.centerX.equalToSuperview()
-                make.top.equalToSuperview().offset(75.0)
-            })
-            }, delayFactor: 1.0)
+            let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
+            let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
+            let combined = scale.concatenating(rotation)
+            self.UPicLogo.transform = combined
+            }, completion: { finished in
+                self.UPicLogo.transform = CGAffineTransform.identity
+            }
+        )
+
+        UIView.animate(withDuration: 0.15, delay: 0.15, animations: {
+            self.view.backgroundColor = .white
+        }, completion: {
+            finished in
+            self.view.backgroundColor = ColorPalette.primaryColor
+        })
         
-        
-        UIView.animate(withDuration: 1.5, animations: {
-            self.UPicLogo.alpha = 0.8
-            }, completion: nil)
+//        let logoAnimator = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut) {
+//            self.UPicLogo.transform = CGAffineTransform.identity
+//        }
+//        
+//        logoAnimator.addAnimations({
+//            self.UPicLogo.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+//            }, delayFactor: 1.3)
+//        
+//        logoAnimator.addAnimations({
+//            self.UPicLogo.transform = CGAffineTransform.identity
+//            }, delayFactor: 2.7)
+//        
+//        
+//        logoAnimator.startAnimation()
         
         self.view.layoutIfNeeded()
     }
@@ -167,7 +199,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         propertyAnimator?.startAnimation()
     }
     
-    //MARK:- UITextFieldDelegate
+    //MARK: - UITextFieldDelegate
     func textFieldDidEndEditing(_ textField: UITextField) {
         activeField = textField
     }
@@ -191,35 +223,30 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // MARK: - Actions
     func didTapLogin(sender: UIButton) {
         self.ref = FIRDatabase.database().reference()
-//        self.ref.child("users").child(usernameTextField.text!).observeSingleEvent(of: .value, with: { (snapshot) in
-//            let value = snapshot.value as? NSDictionary
-//            let anEmail = value?["email"] as? String
         
-            if let password = self.passwordTextField.text, let email = self.usernameTextField.text {
-                FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
-                    if user != nil {
-                        print(user?.displayName)
-                        print("From logging in \(FIRAuth.auth()?.currentUser?.displayName)")
-                        print("From logging in \(FIRAuth.auth()?.currentUser?.uid)")
-                        self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
-                    }
-                    else {
-                        let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                        alert.addAction(ok)
-                        self.present(alert, animated: true, completion: nil)
-                        
-                    }
-                })
-            }
-        //})
+        if let password = self.passwordTextField.text, let email = self.usernameTextField.text {
+            FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+                if user != nil {
+                    print(user?.displayName)
+                    print("From logging in \(FIRAuth.auth()?.currentUser?.displayName)")
+                    print("From logging in \(FIRAuth.auth()?.currentUser?.uid)")
+                    self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
+                }
+                else {
+                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                    
+                }
+            })
+        }
     }
     
     func didTapRegister(sender: UIButton) {
         self.present(RegisterViewController(), animated: true, completion: nil)
     }
     
-
     // MARK: - Lazy Instantiates
     // Logo Image View
     lazy var UPicLogo: UIImageView = {
@@ -232,19 +259,11 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // Textfields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "USERNAME"
-        textField.textColor = ColorPalette.accentColor
-        textField.tintColor = ColorPalette.accentColor
-        textField.borderStyle = .bezel
         return textField
     }()
     
     internal lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "PASSWORD"
-        textField.textColor = ColorPalette.accentColor
-        textField.tintColor = ColorPalette.accentColor
-        textField.borderStyle = .bezel
         textField.isSecureTextEntry = true
         return textField
     }()
@@ -262,29 +281,28 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // Buttons
     internal lazy var loginButton: UIButton = {
-        let button: UIButton = UIButton(type: .roundedRect)
-        button.setTitle("LOG IN", for: .normal)
-        button.backgroundColor = ColorPalette.primaryColor
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
+        let button: UIButton = UIButton()
+        button.setTitle("LOGIN", for: .normal)
         button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.layer.cornerRadius = 4.0
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
+        button.backgroundColor = ColorPalette.primaryColor
+        
         button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 2.0
-        button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        button.layer.borderWidth = 1.0
         return button
     }()
     
     internal lazy var registerButton: UIButton = {
-        let button: UIButton = UIButton(type: .roundedRect)
-        button.setTitle("Register", for: .normal)
-        button.backgroundColor = ColorPalette.primaryColor
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
+        let button: UIButton = UIButton()
+        button.setTitle("REGISTER", for: .normal)
         button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.layer.cornerRadius = 4.0
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
+        button.backgroundColor = ColorPalette.primaryColor
+        
         button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 2.0
-        button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        button.layer.borderWidth = 1.0
         return button
     }()
-    
 }
+
+
