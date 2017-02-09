@@ -11,6 +11,9 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
+//Global Variable to have access throughout the app
+let imageCache = NSCache<AnyObject, AnyObject>()
+
 class LoggedInViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     var titleForCell = "YOUR PROFILE"
     let reuseIdentifier = "imagesCellIdentifier"
@@ -97,10 +100,18 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func downloadImages() {
        
+        
         self.userReference.observe(.childAdded, with: { (snapshot) in
             // Get download URL from snapshot
             let downloadURL = snapshot.value as! String
             dump("This is download URL \(downloadURL)")
+            
+            //Check cache for images
+            if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
+                self.picArray.append(cachedImage)
+                return
+            }
+            
             // Create a storage reference from the URL
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
@@ -109,6 +120,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
                 DispatchQueue.main.async {
                 if let data = data {
                 let pic = UIImage(data: data)
+                imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
                 self.picArray.append(pic!)
                 }
                 self.imagesCollectionView.reloadData()
