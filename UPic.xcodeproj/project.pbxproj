@@ -25,6 +25,7 @@
 		47E4E5481E4A63F500C5FDBF /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */; };
 		47E4E54B1E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */; };
 		47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */; };
+		47E4E5511E4CF95F00C5FDBF /* DisplayImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5501E4CF95F00C5FDBF /* DisplayImageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesCollectionViewCell.swift; sourceTree = "<group>"; };
 		47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesCollectionViewCell.xib; sourceTree = "<group>"; };
+		47E4E5501E4CF95F00C5FDBF /* DisplayImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayImageViewController.swift; sourceTree = "<group>"; };
 		BF106418BB9E589B63A2D021 /* Pods-UPic.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPic.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UPic/Pods-UPic.debug.xcconfig"; sourceTree = "<group>"; };
 		DE930EC10FFB37EBCC6B7EEC /* Pods_UPic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UPic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -120,6 +122,7 @@
 			children = (
 				47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */,
 				47E4E5451E4A63D400C5FDBF /* GalleryCollectionViewController.swift */,
+				47E4E5501E4CF95F00C5FDBF /* DisplayImageViewController.swift */,
 				47E4E5421E4A554200C5FDBF /* Gallery Views */,
 			);
 			name = "Gallery View Controllers";
@@ -308,6 +311,7 @@
 				47E4E5411E4A553E00C5FDBF /* CategoryTableViewCell.swift in Sources */,
 				3E5BE0541E49278600DFE32F /* LoggedInViewController.swift in Sources */,
 				47E4E5351E48EA8300C5FDBF /* Utilities.swift in Sources */,
+				47E4E5511E4CF95F00C5FDBF /* DisplayImageViewController.swift in Sources */,
 				47E4E5461E4A63D400C5FDBF /* GalleryCollectionViewController.swift in Sources */,
 				47E4E51B1E48E6F700C5FDBF /* AppDelegate.swift in Sources */,
 			);
