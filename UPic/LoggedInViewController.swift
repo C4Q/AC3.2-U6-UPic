@@ -109,6 +109,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             //Check cache for images
             if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
                 self.picArray.append(cachedImage)
+                DispatchQueue.main.async {
+                    self.imagesCollectionView.reloadData()
+                }
                 return
             }
             
