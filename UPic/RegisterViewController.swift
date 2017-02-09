@@ -9,12 +9,12 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseStorage
 
-class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate {
+class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var titleForCell = "REGISTER"
     var ref: FIRDatabaseReference!
     var activeField: UITextField?
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,12 +25,19 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
     }
 
     func configureConstraints() {
+        // Image View
+        profilePic.snp.makeConstraints { (make) in
+            make.size.equalTo(CGSize(width: 200.0, height: 200.0))
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(75.0)
+        }
+        
         // Containers
         usernameTextField.snp.makeConstraints { (make) in
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
             make.centerX.equalToSuperview()
-            make.top.equalTo(self.view.snp.top).inset(200.0)
+            make.top.equalTo(profilePic.snp.bottom).offset(100.0)
         }
         
         emailTextField.snp.makeConstraints { (make) in
@@ -64,6 +71,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
         view.addSubview(emailTextField)
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
+        view.addSubview(profilePic)
         
         doneButton.addTarget(self, action: #selector(didTapDone(sender:)), for: .touchUpInside)
         
@@ -90,27 +98,72 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
         if let email = emailTextField.text, let password = passwordTextField.text {
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if user != nil {
+                    // We Have A User
+                    
                     self.ref = FIRDatabase.database().reference()
-                    self.ref.child("users").child((user?.uid)!).setValue([
-                        "password": self.passwordTextField.text,
-                        "username": self.usernameTextField.text,
-                        "email" : self.emailTextField.text,
-                       // "uploadedimages": ["", ""]
-                        ])
-                 }
-                else {
-                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                    alert.addAction(ok)
-                    self.present(alert, animated: true, completion: nil)
+                    let imageName = NSUUID().uuidString
+                    let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
+                    
+                    if let uploadData = UIImagePNGRepresentation(self.profilePic.image!) {
+                        storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                           
+                            if error != nil {
+                                print(error)
+                                return
+                            }
+                            
+                            if let metadataURL = metadata?.downloadURL()?.absoluteString {
+                                let values = [
+                                    "password": self.passwordTextField.text!,
+                                    "username": self.usernameTextField.text!,
+                                    "email" : self.emailTextField.text!,
+                                    "profileImageURL": metadataURL
+                                ]
+                                self.registerUser(uid: (user?.uid)! ,values: values)
+                            }
+                        })
+                    }
                 }
             })
         }
-     self.dismiss(animated: true, completion: nil)
-           }
-
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    // Helper Function To Register User
+    func registerUser(uid: String, values: [String: String]) {
+        self.ref = FIRDatabase.database().reference()
+        self.ref.child("users").child(uid).setValue(values)
+    }
+    
+    
+    // Handler Function for picking profile pic
+    func pickProfileImage() {
+        let picker = UIImagePickerController()
+        present(picker, animated: true, completion: nil)
+        picker.delegate = self
+    }
+    
+   // MARK: - Image Picker Delegate Method
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        dump(info["UIImagePickerControllerOriginalImage"])
+        dump(info)
+        self.profilePic.image = info["UIImagePickerControllerOriginalImage"] as! UIImage?
+        dismiss(animated: true, completion: nil)
+    }
 
     // MARK: - Lazy Instantiates
+    // Image View
+    lazy var profilePic: UIImageView = {
+        let profilePic = UIImageView()
+        profilePic.image = #imageLiteral(resourceName: "user_icon")
+        profilePic.contentMode = .scaleAspectFill
+        profilePic.layer.cornerRadius = 100
+        profilePic.layer.masksToBounds = true
+        profilePic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickProfileImage)))
+        profilePic.isUserInteractionEnabled = true
+        
+        return profilePic
+    }()
     
     // Buttons
     internal lazy var doneButton: UIButton = {
@@ -154,8 +207,4 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate 
         textField.isSecureTextEntry = true
         return textField
     }()
-
-    
-
-
 }

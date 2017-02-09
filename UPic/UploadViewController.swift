@@ -71,8 +71,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         catogorySegmentedControl.tintColor = ColorPalette.accentColor
         catogorySegmentedControl.setTitleTextAttributes([NSForegroundColorAttributeName: ColorPalette.textIconColor], for: UIControlState.normal)
         catogorySegmentedControl.setDividerImage(imageWithColor(color: ColorPalette.primaryColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-        catogorySegmentedControl.layer.borderWidth = 1.0
-        catogorySegmentedControl.layer.borderColor = ColorPalette.textIconColor.cgColor
+  
+        for layer in catogorySegmentedControl.layer.sublayers! {
+            layer.borderWidth = 1.0
+            layer.borderColor = ColorPalette.textIconColor.cgColor
+        }
         
         self.scrollView.addSubview(catogorySegmentedControl)
         
@@ -109,11 +112,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         scrollView.snp.makeConstraints { (view) in
             view.bottom.equalTo(topContainerView.snp.bottom).inset(8.0)
             view.trailing.leading.equalTo(topContainerView)
-            view.height.equalTo(20.0)
+            view.height.equalTo(30.0)
             
         }
         catogorySegmentedControl.snp.makeConstraints { (view) in
-            view.top.bottom.leading.trailing.equalTo(scrollView)
+            view.leading.equalTo(scrollView).offset(8.0)
+            view.trailing.equalTo(scrollView).inset(8.0)
+            view.centerY.equalTo(scrollView)
             view.height.equalTo(20.0)
         }
         
@@ -393,7 +398,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     private func imageWithColor(color: UIColor) -> UIImage {
-        let rect = CGRect(x: 0.0, y: 0.0, width: 15.0, height: 1.0)
+        let rect = CGRect(x: 0.0, y: 0.0, width: 15.0, height: 20.0)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()
         context!.setFillColor(color.cgColor)
@@ -407,16 +412,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         topImagesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         progressContainerView.isHidden = true
-        //        let asset = assetsArr[indexPath.row]
-        //        let manager = PHImageManager.default()
-        //        manager.requestImage(for: asset,targetSize: CGSize(width: 400.0, height: 400.0), contentMode: .aspectFit, options: nil) { (result, _)  in
-        //            //uploading the selected photo to the database
-        //
-        //
-        //            //dump(result)
-        //        }
-        //
-        
+    
     }
     
     internal lazy var topContainerView: UIView! = {
@@ -469,7 +465,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     internal lazy var catogorySegmentedControl: UISegmentedControl! = {
         let segmentedControl = UISegmentedControl()
-     
         return segmentedControl
     }()
     

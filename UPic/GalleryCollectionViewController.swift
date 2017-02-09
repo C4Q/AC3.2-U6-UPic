@@ -75,7 +75,20 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         userReference.observe(.childAdded, with: { (snapshot) in
             
             let downloadURL = snapshot.value as! String
-            dump("This is download URL \(downloadURL)")
+            //dump("This is download URL \(downloadURL)")
+            
+            //Check Cache for Image
+            if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
+              
+                self.imagesToLoad.append(cachedImage)
+                self.imageURLs.append(URL(string: downloadURL)!)
+                DispatchQueue.main.async {
+                    self.colView.reloadData()
+                }
+                dump(cachedImage)
+                return
+            }
+            
             self.imageURLs.append(URL(string: downloadURL)!)
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
             self.refArr.append(storageRef)
@@ -84,6 +97,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                 // Create a UIImage, add it to the array
                 if let data = data {
                     let pic = UIImage(data: data)
+                    
+                    //If Image isn't in Cache, insert it for future use
+                    imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
                     self.imagesToLoad.append(pic!)
                     
                     DispatchQueue.main.async {
@@ -119,6 +135,8 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
 
+        cell.imageView.image = nil
+        
         cell.imageView.image = self.imagesToLoad[indexPath.row]
 
         
