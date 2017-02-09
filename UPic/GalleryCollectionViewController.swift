@@ -76,7 +76,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             
             let downloadURL = snapshot.value as! String
             //dump("This is download URL \(downloadURL)")
-            
+            self.imageURLs.append(URL(string: downloadURL)!)
+            let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
+            self.refArr.append(storageRef)
             //Check Cache for Image
             if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
               
@@ -89,9 +91,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                 return
             }
             
-            self.imageURLs.append(URL(string: downloadURL)!)
-            let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
-            self.refArr.append(storageRef)
+          
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
             storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array

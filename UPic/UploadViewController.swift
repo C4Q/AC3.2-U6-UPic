@@ -203,21 +203,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 "upvotes": "0",
                 "downvotes": "0"
             ]
+            
         metaData.setValue(dict, forKey: "customMetadata")
-            
-//            let metadata = [
-//                "customMetadata": [
-//                    "upvotes": "0",
-//                    "downvotes": "0"
-//                ]
-//            ]
-//            
-            
-//            metaData.customMetadata = [
-//                "upvotes": "0",
-//                "downvotes": "0"
-//            ]
-//            
             let imageRef = storageRef.child("\(imageName).png")
     
             
@@ -230,26 +217,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     //                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
                     
                     databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
-                    /*
-                    // Create storage reference
-                    let mountainsRef = storageRef.child("images/mountains.jpg")
-                    
-                    // Create file metadata including the content type
-                    
-                    metadata.contentType = "image/jpeg"
-                    
-                    // Upload data and metadata
-                    mountainsRef.put(data, metadata: metadata)
-                    
-                    // Upload file and metadata
-                    mountainsRef.putFile(localFile, metadata: metadata)
- */
+       
+ 
                     databaseRef.child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
-//                    metadata?.customMetadata = [
-//                        "upvotes": "0",
-//                        "downvotes": "0"
-//                    ]
-//
+
                     print((String(describing: metadata!.downloadURL()!)))
                     
                 })
