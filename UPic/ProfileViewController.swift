@@ -31,7 +31,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.propertyAnimator = UIViewPropertyAnimator(duration: 1.0, dampingRatio: 0.75, animations: nil)
+        self.propertyAnimator = UIViewPropertyAnimator(duration: 0.8, dampingRatio: 0.75, animations: nil)
         
         configureConstraints()
     }
@@ -46,10 +46,16 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         self.startSlidingAnimations()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        usernameTextField.text = ""
+        passwordTextField.text = ""
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        usernameTextField.underlined()
-        passwordTextField.underlined()
+        usernameTextField.styled(placeholder: "username")
+        passwordTextField.styled(placeholder: "password")
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -152,20 +158,8 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     internal func animateLogo() {
-//        
-//        UIView.animate(withDuration: 1.0, animations: {
-//            
-//            self.UPicLogo.snp.remakeConstraints({ (make) in
-//                make.size.equalTo(CGSize(width: 25.0, height: 25.0))
-//                make.centerX.equalToSuperview()
-//                make.top.equalToSuperview().offset(40.0)
-//            })
-//        })
-//        
         
-
-        
-        UIView.animate(withDuration: 0.3, delay: 0.0, options: .autoreverse, animations: {
+        UIView.animate(withDuration: 0.25, delay: 0.0, options: .autoreverse, animations: {
         
             let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
             let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
@@ -265,21 +259,11 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // Textfields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
-        textField.attributedPlaceholder = NSAttributedString(string: "USERNAME",
-                                                             attributes: [NSForegroundColorAttributeName: ColorPalette.accentColor])
-        
-        textField.textColor = ColorPalette.accentColor
-        textField.tintColor = ColorPalette.accentColor
         return textField
     }()
     
     internal lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.attributedPlaceholder = NSAttributedString(string: "PASSWORD",
-                                                             attributes: [NSForegroundColorAttributeName: ColorPalette.accentColor])
-        
-        textField.textColor = ColorPalette.accentColor
-        textField.tintColor = ColorPalette.accentColor
         textField.isSecureTextEntry = true
         return textField
     }()

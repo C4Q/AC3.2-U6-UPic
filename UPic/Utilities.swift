@@ -44,7 +44,7 @@ public enum GallerySections: String {
 // Textfield Style
 extension UITextField {
     
-    func underlined(){
+    func styled(placeholder: String) {
         let border = CALayer()
         let width = CGFloat(1.0)
         border.borderColor = UIColor.white.cgColor
@@ -52,5 +52,11 @@ extension UITextField {
         border.borderWidth = width
         self.layer.addSublayer(border)
         self.layer.masksToBounds = true
+        
+        self.attributedPlaceholder = NSAttributedString(string: placeholder.uppercased(),
+                                                             attributes: [NSForegroundColorAttributeName: ColorPalette.accentColor])
+        
+        self.textColor = ColorPalette.accentColor
+        self.tintColor = ColorPalette.accentColor
     }
 }
