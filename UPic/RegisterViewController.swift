@@ -27,7 +27,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     func configureConstraints() {
         // Image View
         profilePic.snp.makeConstraints { (make) in
-            make.size.equalTo(CGSize(width: 250.0, height: 200.0))
+            make.size.equalTo(CGSize(width: 200.0, height: 200.0))
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(75.0)
         }
@@ -156,7 +156,9 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     lazy var profilePic: UIImageView = {
         let profilePic = UIImageView()
         profilePic.image = #imageLiteral(resourceName: "user_icon")
-        profilePic.contentMode = .scaleAspectFit
+        profilePic.contentMode = .scaleAspectFill
+        profilePic.layer.cornerRadius = 100
+        profilePic.layer.masksToBounds = true
         profilePic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickProfileImage)))
         profilePic.isUserInteractionEnabled = true
         
