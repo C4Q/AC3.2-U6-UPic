@@ -8,10 +8,12 @@
 
 import UIKit
 
+// Titles
 protocol CellTitled {
     var titleForCell: String { get }
 }
 
+// Colors
 struct ColorPalette {
     static let darkPrimaryColor: UIColor = UIColor(red:0.27, green:0.35, blue:0.39, alpha:1.0)
     static let primaryColor: UIColor = UIColor(red:0.38, green:0.49, blue:0.55, alpha:1.0)
@@ -24,6 +26,7 @@ struct ColorPalette {
     
 }
 
+// Categories
 public enum GallerySections: String {
     case woofmeow = "WOOFS & MEOWS"
     case nature = "NATURE"
@@ -35,5 +38,19 @@ public enum GallerySections: String {
     
     static func numberOfGallerySections() -> Int {
         return GallerySections.sections.count
+    }
+}
+
+// Textfield Style
+extension UITextField {
+    
+    func underlined(){
+        let border = CALayer()
+        let width = CGFloat(1.0)
+        border.borderColor = UIColor.white.cgColor
+        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width:  self.frame.size.width, height: self.frame.size.height)
+        border.borderWidth = width
+        self.layer.addSublayer(border)
+        self.layer.masksToBounds = true
     }
 }
