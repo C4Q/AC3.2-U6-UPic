@@ -189,30 +189,67 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         if user?.uid != nil {
             
-            let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
+            let storageRef = FIRStorage.storage().reference()
+            let databaseRef = FIRDatabase.database().reference()
+            let metaData = FIRStorageMetadata()
+            metaData.contentType = "image/jpeg"
+            
+            let dict = [
+                "upvotes": "0",
+                "downvotes": "0"
+            ]
+        metaData.setValue(dict, forKey: "customMetadata")
+            
+//            let metadata = [
+//                "customMetadata": [
+//                    "upvotes": "0",
+//                    "downvotes": "0"
+//                ]
+//            ]
+//            
+            
+//            metaData.customMetadata = [
+//                "upvotes": "0",
+//                "downvotes": "0"
+//            ]
+//            
+            let imageRef = storageRef.child("\(imageName).png")
+    
             
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
-                let task = storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                let task = imageRef.put(uploadData, metadata: metaData, completion: { (metadata, error) in
                     if error != nil {
-                        print(error)
+                        print(error!.localizedDescription)
                     }
                     
                     //                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
                     
-                    FIRDatabase.database().reference().child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
+                    databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
+                    /*
+                    // Create storage reference
+                    let mountainsRef = storageRef.child("images/mountains.jpg")
                     
-                    FIRDatabase.database().reference().child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
-                    metadata?.customMetadata = [
-                        "upvotes": "0",
-                        "downvotes": "0"
-                    ]
+                    // Create file metadata including the content type
                     
+                    metadata.contentType = "image/jpeg"
                     
+                    // Upload data and metadata
+                    mountainsRef.put(data, metadata: metadata)
+                    
+                    // Upload file and metadata
+                    mountainsRef.putFile(localFile, metadata: metadata)
+ */
+                    databaseRef.child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
+//                    metadata?.customMetadata = [
+//                        "upvotes": "0",
+//                        "downvotes": "0"
+//                    ]
+//
                     print((String(describing: metadata!.downloadURL()!)))
                     
                 })
                 
-                let observer = task.observe(.progress){ (snapshot) in
+                let _ = task.observe(.progress){ (snapshot) in
                     
                     let progress = Float((snapshot.progress?.fractionCompleted)!)
                     if progress == 1.0 {
