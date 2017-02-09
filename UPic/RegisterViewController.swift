@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseStorage
 
 class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var titleForCell = "REGISTER"
@@ -97,23 +98,42 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
         if let email = emailTextField.text, let password = passwordTextField.text {
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if user != nil {
+                    // We Have A User
+                    
                     self.ref = FIRDatabase.database().reference()
-                    self.ref.child("users").child((user?.uid)!).setValue([
-                        "password": self.passwordTextField.text,
-                        "username": self.usernameTextField.text,
-                        "email" : self.emailTextField.text,
-                        ])
-                 }
-                else {
-                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                    alert.addAction(ok)
-                    self.present(alert, animated: true, completion: nil)
+                    let imageName = NSUUID().uuidString
+                    let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
+                    
+                    if let uploadData = UIImagePNGRepresentation(self.profilePic.image!) {
+                        storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                           
+                            if error != nil {
+                                print(error)
+                                return
+                            }
+                            
+                            if let metadataURL = metadata?.downloadURL()?.absoluteString {
+                                let values = [
+                                    "password": self.passwordTextField.text!,
+                                    "username": self.usernameTextField.text!,
+                                    "email" : self.emailTextField.text!,
+                                    "profileImageURL": metadataURL
+                                ]
+                                self.registerUser(uid: (user?.uid)! ,values: values)
+                            }
+                        })
+                    }
                 }
             })
         }
-     self.dismiss(animated: true, completion: nil)
-           }
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    // Helper Function To Register User
+    func registerUser(uid: String, values: [String: String]) {
+        self.ref = FIRDatabase.database().reference()
+        self.ref.child("users").child(uid).setValue(values)
+    }
     
     
     // Handler Function for picking profile pic
@@ -125,6 +145,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     
    // MARK: - Image Picker Delegate Method
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        dump(info["UIImagePickerControllerOriginalImage"])
         dump(info)
         self.profilePic.image = info["UIImagePickerControllerOriginalImage"] as! UIImage?
         dismiss(animated: true, completion: nil)
