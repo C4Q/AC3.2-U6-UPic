@@ -156,7 +156,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     lazy var profilePic: UIImageView = {
         let profilePic = UIImageView()
         profilePic.image = #imageLiteral(resourceName: "user_icon")
-        profilePic.contentMode = .scaleAspectFit
+        profilePic.contentMode = .scaleAspectFill
         profilePic.layer.cornerRadius = 100
         profilePic.layer.masksToBounds = true
         profilePic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickProfileImage)))
