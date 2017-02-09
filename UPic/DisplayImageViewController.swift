@@ -58,10 +58,12 @@ class DisplayImageViewController: UIViewController {
     }
  
     func editMetaData() {
-         let storageRef = FIRStorage.storage().reference().child("users")
+         let storageRef = FIRStorage.storage().reference()
         // Create reference to the file whose metadata we want to change
-        let forestRef = storageRef.child("\(imageUrl)")
+       // let forestRef = storageRef.child("\(imageUrl!)")
+        let forestRef = storageRef.child("https://firebasestorage.googleapis.com/v0/b/upic-a2216.appspot.com/o/0A689152-7D7F-4529-BC82-1EF1D72B48E0.png?alt=media&token=6eee630a-dce4-40c6-af5d-f88fcec28f9e")
         
+       // let stuff = storageRef.
         // Create file metadata to update
         let newMetadata = FIRStorageMetadata()
         newMetadata.cacheControl = "public,max-age=300";
