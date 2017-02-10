@@ -32,12 +32,13 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         setupViewHierarchy()
         configureConstraints()
         self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem = editButtonItem
         self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
         dump(self.userReference)
         dump(FIRStorage.storage().reference())
-        //downloadImages()
+
+        downloadImages()
         //imagesCollectionView.clearsSelectionOnViewWillAppear = false
+
     }
     
     

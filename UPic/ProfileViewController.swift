@@ -14,10 +14,10 @@ import FirebaseDatabase
 class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // MARK: - Properties
-    var propertyAnimator: UIViewPropertyAnimator?
     var titleForCell = "LOGIN/REGISTER"
     var activeField: UITextField?
     var ref: FIRDatabaseReference!
+    var propertyAnimator: UIViewPropertyAnimator?
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -56,6 +56,8 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         super.viewDidLayoutSubviews()
         usernameTextField.styled(placeholder: "username")
         passwordTextField.styled(placeholder: "password")
+        loginButton.styled(title: "login")
+        registerButton.styled(title: "register")
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -158,39 +160,23 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     internal func animateLogo() {
-        
-        UIView.animate(withDuration: 0.25, delay: 0.0, options: .autoreverse, animations: {
-        
+    
+        UIView.animate(withDuration: 0.25, delay: 0.3, options: .autoreverse, animations: {
+            
             let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
             let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
             let combined = scale.concatenating(rotation)
             self.UPicLogo.transform = combined
             }, completion: { finished in
                 self.UPicLogo.transform = CGAffineTransform.identity
-            }
-        )
-
-        UIView.animate(withDuration: 0.15, delay: 0.15, animations: {
-            self.view.backgroundColor = .white
-        }, completion: {
-            finished in
-            self.view.backgroundColor = ColorPalette.primaryColor
-        })
+            })
         
-//        let logoAnimator = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut) {
-//            self.UPicLogo.transform = CGAffineTransform.identity
-//        }
-//        
-//        logoAnimator.addAnimations({
-//            self.UPicLogo.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-//            }, delayFactor: 1.3)
-//        
-//        logoAnimator.addAnimations({
-//            self.UPicLogo.transform = CGAffineTransform.identity
-//            }, delayFactor: 2.7)
-//        
-//        
-//        logoAnimator.startAnimation()
+        UIView.animate(withDuration: 0.15, delay: 0.3, animations: {
+            self.view.backgroundColor = .white
+            }, completion: {
+                finished in
+                self.view.backgroundColor = ColorPalette.primaryColor
+        })
         
         self.view.layoutIfNeeded()
     }
@@ -282,25 +268,11 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // Buttons
     internal lazy var loginButton: UIButton = {
         let button: UIButton = UIButton()
-        button.setTitle("LOGIN", for: .normal)
-        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
-        button.backgroundColor = ColorPalette.primaryColor
-        
-        button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 1.0
         return button
     }()
     
     internal lazy var registerButton: UIButton = {
         let button: UIButton = UIButton()
-        button.setTitle("REGISTER", for: .normal)
-        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
-        button.backgroundColor = ColorPalette.primaryColor
-        
-        button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 1.0
         return button
     }()
 }
