@@ -18,6 +18,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
     let ref = FIRDatabase.database().reference()
+    let metaRef: FIRStorageReference!
     var imageURLs: [URL] = []
     var imagesToLoad = [UIImage]()
     var refArr: [FIRStorageReference] = []
@@ -136,41 +137,22 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
         
-        let databaseRef = FIRDatabase.database().reference()
-        let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitleArr[indexPath.row])
-        var upvoters: [String] = []
-        var downvoters: [String] = []
-        var upNum = 0
-        var downNum = 0
-        
-        ref.observe(.value, with: { (snapshot) in
-            
-            if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
-                upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
+        metaRef.metadata { (metaData, error) in
+           
+            if let error = error {
+                print("Error ----- \(error.localizedDescription)")
             }
-            
-            if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
-                downvoters = snapshot.childSnapshot(forPath: "downvotes").value! as! [String]
+                
+            else {
+                
+                let upvotesMetadata = metaData?.customMetadata!["upvotes"]!
+                let downvotesMetadata = metaData?.customMetadata!["downvotes"]!
+                
+                cell.upLabel.text = upvotesMetadata!
+                cell.downLabel.text = downvotesMetadata!
             }
-            
-            for name in upvoters {
-                if name != "" {
-                    upNum += 1
-                }
-            }
-            
-            for name in downvoters {
-                if name != "" {
-                    downNum += 1
-                }
-            }
-            
-            DispatchQueue.main.async {
-                cell.upLabel.text = String(upNum)
-                cell.downLabel.text = String(downNum)
-            }
-            
-        })
+        }
+
 
         cell.imageView.image = nil
         
