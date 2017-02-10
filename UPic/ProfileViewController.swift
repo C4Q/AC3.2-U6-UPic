@@ -26,38 +26,34 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         setupViewHierarchy()
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+
+        _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.isHidden = true }
+        _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.alpha = 0.3 }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.propertyAnimator = UIViewPropertyAnimator(duration: 0.8, dampingRatio: 0.75, animations: nil)
+        self.propertyAnimator = UIViewPropertyAnimator(duration: 1.8, dampingRatio: 0.75, animations: nil)
         
         configureConstraints()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
+        _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.isHidden = false }
+
         self.animateLogo()
         
-        self.addSlidingAnimationToUsername()
-        self.addSlidingAnimationToPassword()
-        self.startSlidingAnimations()
+        self.addPropertyAnimations()
+        self.startAnimations()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         usernameTextField.text = ""
         passwordTextField.text = ""
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        usernameTextField.styled(placeholder: "username")
-        passwordTextField.styled(placeholder: "password")
-        loginButton.styled(title: "login")
-        registerButton.styled(title: "register")
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -94,14 +90,14 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.view.snp.top)
+            make.top.equalTo(self.UPicLogo.snp.bottom).offset(24.0)
         }
         
         passwordContainerView.snp.makeConstraints { (make) in
-            make.width.equalTo(usernameContainerView.snp.width)
-            make.height.equalTo(usernameContainerView.snp.height)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.view.snp.top)
+            make.width.equalTo(self.usernameContainerView.snp.width)
+            make.height.equalTo(self.usernameContainerView.snp.height)
+            make.top.equalTo(self.usernameContainerView.snp.bottom).offset(16.0)
+            make.trailing.equalTo(self.usernameContainerView.snp.trailing)
         }
         
         // Textfields
@@ -131,37 +127,20 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     // MARK: - Property Animations
-    internal func addSlidingAnimationToUsername() {
+    internal func addPropertyAnimations() {
         
         propertyAnimator?.addAnimations ({
-            self.usernameContainerView.snp.remakeConstraints { (make) in
-                make.width.equalToSuperview().multipliedBy(0.8)
-                make.height.equalTo(44.0)
-                make.centerX.equalToSuperview()
-                make.top.equalTo(self.UPicLogo.snp.bottom).offset(24.0)
-            }
-            
-            self.view.layoutIfNeeded()
-            }, delayFactor: 0.0)
-    }
-    
-    internal func addSlidingAnimationToPassword() {
-        
-        propertyAnimator?.addAnimations ({
-            self.passwordContainerView.snp.remakeConstraints { (make) in
-                make.width.equalTo(self.usernameContainerView.snp.width)
-                make.height.equalTo(self.usernameContainerView.snp.height)
-                make.top.equalTo(self.usernameContainerView.snp.bottom).offset(16.0)
-                make.trailing.equalTo(self.usernameContainerView.snp.trailing)
-            }
-            
-            self.view.layoutIfNeeded()
-            }, delayFactor: 0.1)
+            self.usernameContainerView.alpha = 1.0
+            self.passwordContainerView.alpha = 1.0
+            self.loginButton.alpha = 1.0
+            self.registerButton.alpha = 1.0
+        }, delayFactor: 0.3)
+        self.view.layoutIfNeeded()
     }
     
     internal func animateLogo() {
     
-        UIView.animate(withDuration: 0.25, delay: 0.3, options: .autoreverse, animations: {
+        UIView.animate(withDuration: 0.25, delay: 0.2, options: .autoreverse, animations: {
             
             let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
             let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
@@ -171,7 +150,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
                 self.UPicLogo.transform = CGAffineTransform.identity
             })
         
-        UIView.animate(withDuration: 0.15, delay: 0.3, animations: {
+        UIView.animate(withDuration: 0.15, delay: 0.2, animations: {
             self.view.backgroundColor = .white
             }, completion: {
                 finished in
@@ -181,8 +160,13 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         self.view.layoutIfNeeded()
     }
     
-    internal func startSlidingAnimations() {
+    internal func startAnimations() {
+        self.view.layoutIfNeeded()
         propertyAnimator?.startAnimation()
+        usernameTextField.styled(placeholder: "username")
+        passwordTextField.styled(placeholder: "password")
+        loginButton.styled(title: "login")
+        registerButton.styled(title: "register")
     }
     
     //MARK: - UITextFieldDelegate
