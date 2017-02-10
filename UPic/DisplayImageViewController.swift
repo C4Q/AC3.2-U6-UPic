@@ -74,7 +74,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         
         userRef.observe(.childAdded, with: { (snapshot) in
             
-            if snapshot.childSnapshot(forPath: "username").value as! String == username {
+            if snapshot.childSnapshot(forPath: "username").value as? String != nil {
                 
                 idToName.id = snapshot.key
                 idToName.name = snapshot.childSnapshot(forPath: "username").value as! String
