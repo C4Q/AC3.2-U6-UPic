@@ -25,7 +25,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     var userTableView: UITableView = UITableView()
     var userVotes: [String] = []
 
-    var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("profileImageURL")
+    var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
     var userUploadsReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
     
     var picArray = [UIImage]()
@@ -122,7 +122,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     func downloadProfileImage() {
         //Fetch User Profile Image
         self.userProfileImageReference.observe(.childAdded, with: { (snapshot) in
-            let downloadURL = snapshot.value as! String
+           
+            if snapshot.key == "profileImageURL" {
+                let downloadURL = snapshot.value as! String
+
             
             //Check cache for profile image
             if let cachedProfilePic = imageCache.object(forKey: downloadURL as AnyObject) {
@@ -135,14 +138,18 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             //Download Image If Not Found In Cache. Insert into cache as well
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
             
-            storageRef.data(withMaxSize: 10 * 2000 * 2000) { (data, error) -> Void in
-                
+            storageRef.data(withMaxSize: 1 * 2000 * 2000) { (data, error) -> Void in
+                if error != nil {
+                    print(error)
+                    return
+                }
                 if let data = data {
+                    DispatchQueue.main.async {
                     let pic = UIImage(data: data)
                     imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
-                    DispatchQueue.main.async {
                         self.profileImage.image = pic
                     }
+                }
                 }
             }
         })
@@ -168,7 +175,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             // Create a storage reference from the URL
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
-            storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
+            storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array
                 if let data = data {
                 let pic = UIImage(data: data)
@@ -216,7 +223,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     lazy var profileImage: UIImageView = {
         let profilePic = UIImageView()
         profilePic.contentMode = .scaleAspectFit
-        profilePic.image = #imageLiteral(resourceName: "user_icon")
+        //profilePic.image = #imageLiteral(resourceName: "user_icon")
         profilePic.layer.cornerRadius = 100.0
         profilePic.layer.masksToBounds = true
         return profilePic
