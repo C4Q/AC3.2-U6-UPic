@@ -37,6 +37,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureConstraints()
+        self.colView.reloadData()
     }
     
     override func viewWillLayoutSubviews() {
@@ -122,7 +123,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             }
             
         })
-       // dump(imageTitleArr)
     }
     
     // MARK: UICollectionViewDataSource
@@ -138,6 +138,42 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
         
+        let databaseRef = FIRDatabase.database().reference()
+        let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitleArr[indexPath.row])
+        var upvoters: [String] = []
+        var downvoters: [String] = []
+        var upNum = 0
+        var downNum = 0
+        
+        ref.observe(.value, with: { (snapshot) in
+            
+            if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
+                upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
+            }
+            
+            if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
+                downvoters = snapshot.childSnapshot(forPath: "downvotes").value! as! [String]
+            }
+            
+            for name in upvoters {
+                if name != "" {
+                    upNum += 1
+                }
+            }
+            
+            for name in downvoters {
+                if name != "" {
+                    downNum += 1
+                }
+            }
+            
+            DispatchQueue.main.async {
+                cell.upLabel.text = String(upNum)
+                cell.downLabel.text = String(downNum)
+            }
+            
+        })
+
         cell.imageView.image = nil
         
         cell.imageView.image = self.imagesToLoad[indexPath.row]
@@ -149,12 +185,18 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         
         let displayImageVC = DisplayImageViewController()
         let index = indexPath.row
+        
         displayImageVC.image = self.imagesToLoad[index]
         displayImageVC.imageUrl = self.imageURLs[index]
         displayImageVC.ref = self.refArr[index]
         displayImageVC.category = category
         displayImageVC.imageTitle = self.imageTitleArr[index]
+        
         self.navigationController?.pushViewController(displayImageVC, animated: false)
+        
+        let backItem = UIBarButtonItem()
+        backItem.title = ""
+        navigationItem.backBarButtonItem = backItem
         
     }
     
@@ -165,7 +207,40 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         return CGSize(width: width, height: height)
     }
     
-    
+    func getVoters(imageTitle: String) -> (Int, Int) {
+        let databaseRef = FIRDatabase.database().reference()
+        let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitle)
+        
+        var upvoters: [String] = []
+        var downvoters: [String] = []
+        var upNum = 0
+        var downNum = 0
+        
+        ref.observe(.value, with: { (snapshot) in
+            
+            if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
+                upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
+            }
+            
+            if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
+                downvoters = snapshot.childSnapshot(forPath: "downvotes").value! as! [String]
+            }
+            
+            for name in upvoters {
+                if name != "" {
+                    upNum += 1
+                }
+            }
+            
+            for name in downvoters {
+                if name != "" {
+                    downNum += 1
+                }
+            }
+        })
+        return (upNum, downNum)
+    }
+
     // MARK: UICollectionViewDelegate
     
     /*
