@@ -149,7 +149,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             storageRef.data(withMaxSize: 1 * 2000 * 2000) { (data, error) -> Void in
                 if error != nil {
-                    print(error?.localizedDescription)
+                    print(error!.localizedDescription)
                     return
                 }
                 if let data = data {
@@ -205,7 +205,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        print(userVotes.count)
         return userVotes.count
     }
     
@@ -224,7 +223,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         userReference.observe(.childAdded, with: { (snapshot) in
            
             if snapshot.key == "upvote" {
+
                self.userVotes.append("You upvoted \(snapshot.value as! String)")
+
             }
             
             if snapshot.key == "downvote" {
@@ -265,7 +266,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
-                    print(error)
+                    print(error?.localizedDescription)
                     return
                 }
                 if let metadataURL = metadata?.downloadURL()?.absoluteString {
