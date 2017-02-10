@@ -205,6 +205,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
+        print(userVotes.count)
         return userVotes.count
     }
     
@@ -226,11 +227,12 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             if snapshot.key == "upvote" {
                userArray.append(snapshot.value as! String)
             }
-            self.
+
+            DispatchQueue.main.async {
+                self.userTableView.reloadData()
+            }
         })
-        DispatchQueue.main.async {
-            self.userTableView.reloadData()
-        }
+       
     }
 
     
