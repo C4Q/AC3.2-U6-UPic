@@ -37,11 +37,11 @@ class GalleryCollectionViewCell: UICollectionViewCell {
         downArrow.image = #imageLiteral(resourceName: "down_arrow").maskWithColor(color: .white)
         
         upLabel = UILabel()
-        upLabel.text = "Tst"
+        upLabel.text = ""
         upLabel.textColor = ColorPalette.textIconColor
         
         downLabel = UILabel()
-        downLabel.text = "Tst"
+        downLabel.text = ""
         downLabel.textColor = ColorPalette.textIconColor
         
         contentView.addSubview(imageView)
@@ -80,8 +80,6 @@ class GalleryCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-    
-
 }
 
 extension UIImage {
