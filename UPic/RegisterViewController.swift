@@ -252,10 +252,19 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 
                 if error != nil {
-                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                    alert.addAction(ok)
-                    self.present(alert, animated: true, completion: nil)
+                    
+                    if let errCode = FIRAuthErrorCode(rawValue: error!._code) {
+                        
+                        switch errCode {
+                        case .errorCodeEmailAlreadyInUse:
+                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+                            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                            alert.addAction(ok)
+                            self.present(alert, animated: true, completion: nil)
+                        default:
+                            print("Create User Error: \(error)")
+                        }    
+                    }
                 }
                 
                 if user != nil {
