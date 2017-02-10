@@ -191,7 +191,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     internal func upvoteButtonTapped(sender: UIButton) {
-        //if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
             upvotes += 1
             
             
@@ -213,12 +213,12 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                 
                 FIRDatabase.database().reference().child("users").child(userId).child("upvotes").updateChildValues(["upvote" : self.imageTitle])
             }
-       // }
+        }
     }
     
     internal func downvoteButtonTapped(sender: UIButton) {
         
-        //if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
             downvotes += 1
             editMetaData()
             updateVoteLabels()
@@ -237,7 +237,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                 FIRDatabase.database().reference().child("users").child(userId).child("downvotes").updateChildValues(["downvote" : self.imageTitle])
                 
             }
-        //}
+        }
     }
     
     func sendVoters(voteType: String, username: String) {
