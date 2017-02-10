@@ -18,7 +18,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
     let ref = FIRDatabase.database().reference()
-    let metaRef: FIRStorageReference!
     var imageURLs: [URL] = []
     var imagesToLoad = [UIImage]()
     var refArr: [FIRStorageReference] = []
@@ -137,7 +136,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
         
-        metaRef.metadata { (metaData, error) in
+        let ref = self.refArr[indexPath.row]
+        
+        ref.metadata { (metaData, error) in
            
             if let error = error {
                 print("Error ----- \(error.localizedDescription)")
