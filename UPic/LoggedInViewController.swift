@@ -20,9 +20,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
     let bottomCollectionViewNibName = "ImagesCollectionViewCell"
     var imagesCollectionView: UICollectionView!
-    
-    
-    var userReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
+
+    var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("profileImageURL")
+    var userUploadsReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
     
     
     var picArray = [UIImage]()
@@ -32,26 +32,26 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         setupViewHierarchy()
         configureConstraints()
         self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
-        dump(self.userReference)
+        self.profileImage.image = #imageLiteral(resourceName: "user_icon")
         dump(FIRStorage.storage().reference())
-
-        downloadImages()
+        downloadProfileImage()
+        downloadUserUploads()
         //imagesCollectionView.clearsSelectionOnViewWillAppear = false
 
     }
     
     
     func configureConstraints() {
-        // Buttons
-        logoutButton.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
-        }
         
         imagesCollectionView.snp.makeConstraints { (view) in
             view.bottom.leading.trailing.equalToSuperview()
             view.height.equalTo(175.0)
         }
+        profileImage.snp.makeConstraints { (view) in
+            view.top.leading.trailing.equalToSuperview()
+            view.height.equalTo(200.0)
+        }
+        
         
     }
     func setupViewHierarchy() {
@@ -59,12 +59,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.view.backgroundColor = ColorPalette.primaryColor
         self.tabBarController?.title = titleForCell
         createBottomCollectionView()
-        view.addSubview(logoutButton)
         view.addSubview(imagesCollectionView)
-        
-        
-        logoutButton.addTarget(self, action: #selector(didTapLogout(sender:)), for: .touchUpInside)
-        
+        view.addSubview(profileImage)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "LOG OUT", style: .plain, target: self, action: #selector(didTapLogout(sender:)))
     }
     
     func didTapLogout(sender: UIButton) {
@@ -99,10 +96,45 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         return self.picArray.count
     }
     
-    func downloadImages() {
+    
+    
+    func downloadProfileImage() {
+        //Fetch User Profile Image
+        self.userProfileImageReference.observe(.childAdded, with: { (snapshot) in
+            let downloadURL = snapshot.value as! String
+            dump("profile image url \(downloadURL)")
+            //Check cache for profile image
+            if let cachedProfilePic = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
+                DispatchQueue.main.async {
+                    self.view.layoutSubviews()
+                    self.profileImage.image = cachedProfilePic
+                }
+                return
+            }
+            
+            //Download Image If Not Found In Cache. Insert into cache as well
+            let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
+            
+            storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
+                
+                if let data = data {
+                    let pic = UIImage(data: data)
+                    imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
+                    DispatchQueue.main.async {
+                        self.view.layoutSubviews()
+                        self.profileImage.image = pic
+                    }
+                }
+            }
+        })
+
+    }
+    
+    func downloadUserUploads() {
        
         
-        self.userReference.observe(.childAdded, with: { (snapshot) in
+        //Downloads User Uploads
+        self.userUploadsReference.observe(.childAdded, with: { (snapshot) in
             // Get download URL from snapshot
             let downloadURL = snapshot.value as! String
             dump("This is download URL \(downloadURL)")
@@ -121,12 +153,12 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
             storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array
-       DispatchQueue.main.async {
                 if let data = data {
                 let pic = UIImage(data: data)
                 imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
                 self.picArray.append(pic!)
                 }
+                DispatchQueue.main.async {
                 self.imagesCollectionView.reloadData()
 
                 }
@@ -150,18 +182,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     // MARK: - Lazy Instantiates
     
-    // Buttons
-    internal lazy var logoutButton: UIButton = {
-        let button: UIButton = UIButton(type: .roundedRect)
-        button.setTitle("LOG OUT", for: .normal)
-        button.backgroundColor = ColorPalette.primaryColor
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
-        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.layer.cornerRadius = 4.0
-        button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 2.0
-        button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
-        return button
+    // UIImage
+    lazy var profileImage: UIImageView = {
+        let profilePic = UIImageView()
+        profilePic.contentMode = .scaleAspectFit
+        return profilePic
     }()
     
 }
