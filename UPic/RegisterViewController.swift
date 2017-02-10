@@ -19,7 +19,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     var activeField: UITextField?
     var propertyAnimator: UIViewPropertyAnimator?
     var dynamicAnimator: UIDynamicAnimator?
-    var needsAnimating = false
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
