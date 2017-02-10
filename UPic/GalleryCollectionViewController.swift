@@ -41,7 +41,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        colView.collectionViewLayout.invalidateLayout()
     }
     
     override func didReceiveMemoryWarning() {
@@ -53,12 +52,16 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         self.edgesForExtendedLayout = []
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 0.0
+        layout.minimumInteritemSpacing = 0.0
         
         colView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         colView.delegate = self
         colView.dataSource = self
         colView.register(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "GalleryCell")
         colView.backgroundColor = ColorPalette.primaryColor
+
         
         self.navigationController?.navigationBar.tintColor = ColorPalette.accentColor
         self.title = titleForCell
@@ -99,8 +102,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                     return
                 }
                 
-                
-                
                 // Download the data, assuming a max size of 1MB (you can change this as necessary)
                 storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                     // Create a UIImage, add it to the array
@@ -123,7 +124,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     }
     
     // MARK: UICollectionViewDataSource
-    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -139,9 +139,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         cell.imageView.image = nil
         
         cell.imageView.image = self.imagesToLoad[indexPath.row]
-        
-        
-        cell.textLabel.text = String(describing: self.imagesToLoad[indexPath.row])
         
         return cell
     }
@@ -159,22 +156,13 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         
     }
     
-    //TODO: Fix Collection View Overlap
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: colView.frame.size.width/2, height: colView.frame.size.width/2)
+        
+        let height = (self.view.frame.size.height) / 3.0
+        let width = (self.view.frame.size.width) / 2.0
+        return CGSize(width: width, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0.0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout
-        collectionViewLayout: UICollectionViewLayout,
-                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0.0
-    }
     
     // MARK: UICollectionViewDelegate
     

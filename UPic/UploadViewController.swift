@@ -358,7 +358,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let manager = PHImageManager.default()
         let asset = assetsArr[indexPath.row]
         
-        
         if collectionView == self.imagesCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCollectionViewCell
             cell.collectionImageView.image = nil

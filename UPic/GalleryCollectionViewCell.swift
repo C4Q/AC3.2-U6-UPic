@@ -11,19 +11,20 @@ import UIKit
 class GalleryCollectionViewCell: UICollectionViewCell {
 
     var imageView: UIImageView!
-    var textLabel: UILabel!
+//    var textLabel: UILabel!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
-        textLabel = UILabel(frame:  CGRect(x: 0, y: imageView.frame.size.height / 2, width: frame.size.width, height: frame.size.height))
+//        textLabel = UILabel(frame:  CGRect(x: 0, y: imageView.frame.size.height / 2, width: frame.size.width, height: frame.size.height))
         
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         contentView.addSubview(imageView)
         
-        textLabel.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
-        textLabel.textAlignment = .center
-        contentView.addSubview(textLabel)
+//        textLabel.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
+//        textLabel.textAlignment = .center
+//        contentView.addSubview(textLabel)
     }
     
     required init?(coder aDecoder: NSCoder) {

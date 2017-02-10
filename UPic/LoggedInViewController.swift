@@ -33,6 +33,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         configureConstraints()
         self.navigationItem.hidesBackButton = true
         self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
+        
         dump(self.userReference)
         dump(FIRStorage.storage().reference())
 
