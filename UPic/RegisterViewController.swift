@@ -17,7 +17,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     var titleForCell = "REGISTER"
     var ref: FIRDatabaseReference!
     var activeField: UITextField?
-    var needsAnimating = false
     var propertyAnimator: UIViewPropertyAnimator?
     var dynamicAnimator: UIDynamicAnimator?
     
@@ -61,7 +60,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
         view.addSubview(validUsernameLabel)
         view.addSubview(validEmailLabel)
         view.addSubview(validPasswordLabel)
-        view.addSubview(blueView)
         
         doneButton.addTarget(self, action: #selector(didTapDone(sender:)), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(didTapCancel(sender:)), for: .touchUpInside)
@@ -134,14 +132,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
             make.width.equalTo(passwordTextField)
             make.height.equalTo(0.0)
         }
-        
-        // View
-        blueView.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview()
-            make.top.equalTo(usernameTextField)
-            make.trailing.equalTo(usernameTextField.snp.leading)
-            make.bottom.equalTo(passwordTextField)
-        }
     }
     
     //MARK:- UITextFieldDelegate
@@ -162,11 +152,11 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print("TESJJLDKSFD")
+        
         switch textField {
         case usernameTextField:
             if (usernameTextField.text?.characters.count)! > 2 {
-                print("this should be working")
+                
                 propertyAnimator?.addAnimations {
                     self.validUsernameLabel.snp.remakeConstraints({ (make) in
                         make.top.equalTo(self.usernameTextField.snp.bottom)
@@ -217,7 +207,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     func didTapDone(sender: UIButton) {
         // Username
         if (usernameTextField.text?.characters.count)! < 3 {
-            print(usernameTextField.text?.characters.count)
             propertyAnimator?.addAnimations {
                 self.validUsernameLabel.snp.remakeConstraints({ (make) in
                     make.top.equalTo(self.usernameTextField.snp.bottom)
@@ -227,7 +216,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                 })
                 self.view.layoutIfNeeded()
             }
-            needsAnimating = true
         }
         
         // Email
@@ -241,7 +229,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                 })
                 self.view.layoutIfNeeded()
             }
-            needsAnimating = true
         }
         
         // Password
@@ -255,7 +242,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                 })
                 self.view.layoutIfNeeded()
             }
-            needsAnimating = true
         }
         
         // Login
@@ -291,22 +277,11 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                 }
             })
         }
-        if needsAnimating {
-            propertyAnimator?.startAnimation()
-            needsAnimating = false
-        }
+        propertyAnimator?.startAnimation()
     }
     
     func didTapCancel(sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
-    }
-    
-    // Dynamic Animations
-    func snapView(_ label: UILabel) {
-        let point = CGPoint(x: self.usernameTextField.frame.width / 2, y: self.view.frame.minY + 319 + 55)
-        let snappingBehavior = UISnapBehavior(item: label, snapTo: point)
-        snappingBehavior.damping = 1.0
-        self.dynamicAnimator?.addBehavior(snappingBehavior)
     }
     
     // Helper Function To Register User
@@ -397,12 +372,5 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
         label.textColor = ColorPalette.textIconColor
         label.text = "Password must be atleast 6 characters"
         return label
-    }()
-    
-    // Dynamic Animator Assisting View
-    internal lazy var blueView: UIView = {
-        let view = UIView()
-        view.backgroundColor = ColorPalette.primaryColor
-        return view
     }()
 }

@@ -169,8 +169,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             self.UPicLogo.transform = combined
             }, completion: { finished in
                 self.UPicLogo.transform = CGAffineTransform.identity
-            }
-        )
+            })
         
         UIView.animate(withDuration: 0.15, delay: 0.15, animations: {
             self.view.backgroundColor = .white
