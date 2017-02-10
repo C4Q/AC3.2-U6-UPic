@@ -287,9 +287,10 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                                     "password": self.passwordTextField.text!,
                                     "username": self.usernameTextField.text!,
                                     "email" : self.emailTextField.text!,
-                                    "profileImageURL": metadataURL
-                                ]
-                                self.registerUser(uid: (user?.uid)! ,values: values)
+                                    "profileImageURL" : [self.usernameTextField.text! : metadataURL]
+                                ] as [String : Any]
+                                
+                                self.registerUser(uid: (user?.uid)! ,values: values as [String : Any])
                                 self.dismiss(animated: true, completion: nil)
                             }
                         })
@@ -304,7 +305,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     }
     
     // Helper Function To Register User
-    func registerUser(uid: String, values: [String: String]) {
+    func registerUser(uid: String, values: [String: Any]) {
         self.ref = FIRDatabase.database().reference()
         self.ref.child("users").child(uid).setValue(values)
     }
