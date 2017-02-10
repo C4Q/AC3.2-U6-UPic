@@ -20,6 +20,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let ref = FIRDatabase.database().reference()
     var imageURLs: [URL] = []
     var imagesToLoad = [UIImage]()
+    var refArr: [FIRStorageReference] = []
     var category: GallerySections!
     
     
@@ -74,14 +75,31 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         userReference.observe(.childAdded, with: { (snapshot) in
             
             let downloadURL = snapshot.value as! String
-            dump("This is download URL \(downloadURL)")
+            //dump("This is download URL \(downloadURL)")
             self.imageURLs.append(URL(string: downloadURL)!)
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
+            self.refArr.append(storageRef)
+            //Check Cache for Image
+            if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
+              
+                self.imagesToLoad.append(cachedImage)
+                self.imageURLs.append(URL(string: downloadURL)!)
+                DispatchQueue.main.async {
+                    self.colView.reloadData()
+                }
+                dump(cachedImage)
+                return
+            }
+            
+          
             // Download the data, assuming a max size of 1MB (you can change this as necessary)
             storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 // Create a UIImage, add it to the array
                 if let data = data {
                     let pic = UIImage(data: data)
+                    
+                    //If Image isn't in Cache, insert it for future use
+                    imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
                     self.imagesToLoad.append(pic!)
                     
                     DispatchQueue.main.async {
@@ -117,6 +135,8 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) as! GalleryCollectionViewCell
 
+        cell.imageView.image = nil
+        
         cell.imageView.image = self.imagesToLoad[indexPath.row]
 
         
@@ -130,6 +150,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         let displayImageVC = DisplayImageViewController()
         displayImageVC.image = self.imagesToLoad[indexPath.row]
         displayImageVC.imageUrl = self.imageURLs[indexPath.row]
+        displayImageVC.ref = self.refArr[indexPath.row]
         self.navigationController?.pushViewController(displayImageVC, animated: false)
 
     }

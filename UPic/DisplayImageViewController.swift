@@ -12,9 +12,12 @@ import FirebaseDatabase
 import FirebaseStorage
 
 class DisplayImageViewController: UIViewController {
-
+    
     var image: UIImage!
     var imageUrl: URL!
+    var ref: FIRStorageReference!
+    var upvotes = 0
+    var downvotes = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,10 +28,11 @@ class DisplayImageViewController: UIViewController {
         selectedImageView.image = image
         selectedImageView.setNeedsLayout()
         
-        print(imageUrl)
+        getMetadata()
+        updateVoteLabels()
         
     }
-
+    
     func setupViewHierarchy() {
         self.view.addSubview(imageContainerView)
         imageContainerView.addSubview(selectedImageView)
@@ -40,51 +44,73 @@ class DisplayImageViewController: UIViewController {
         
         upvoteButton.addTarget(self, action: #selector(upvoteButtonTapped(sender:)), for: .touchUpInside)
         downvoteButton.addTarget(self, action: #selector(downvoteButtonTapped(sender:)), for: .touchUpInside)
-
-                
+        
+        
     }
     
     internal func upvoteButtonTapped(sender: UIButton) {
         
-        print("Upvote Tapped")
+        upvotes += 1
         editMetaData()
+        updateVoteLabels()
         
     }
     
     internal func downvoteButtonTapped(sender: UIButton) {
         
-        print("Downvote Tapped")
-        
+        downvotes += 1
+        editMetaData()
+        updateVoteLabels()
     }
- 
+    
     func editMetaData() {
-         let storageRef = FIRStorage.storage().reference()
-        // Create reference to the file whose metadata we want to change
-       // let forestRef = storageRef.child("\(imageUrl!)")
-        let forestRef = storageRef.child("https://firebasestorage.googleapis.com/v0/b/upic-a2216.appspot.com/o/0A689152-7D7F-4529-BC82-1EF1D72B48E0.png?alt=media&token=6eee630a-dce4-40c6-af5d-f88fcec28f9e")
         
-       // let stuff = storageRef.
-        // Create file metadata to update
         let newMetadata = FIRStorageMetadata()
-        newMetadata.cacheControl = "public,max-age=300";
-        newMetadata.contentType = "image/jpeg";
+//        newMetadata.cacheControl = "public,max-age=300"
+        newMetadata.contentType = "image/jpeg"
         
-        // Update metadata properties
-        forestRef.update(newMetadata) { metadata, error in
+        let dict = [
+            "upvotes": String(upvotes),
+            "downvotes": String(downvotes)
+        ]
+        
+        newMetadata.setValue(dict, forKey: "customMetadata")
+        
+        self.ref.update(newMetadata) { metadata, error in
             if let error = error {
-                // Uh-oh, an error occurred!
-            print("Error ----- \(error.localizedDescription)")
+                print("Error ----- \(error.localizedDescription)")
                 
             } else {
-                // Updated metadata for 'images/forest.jpg' is returned
-                let value = String(newMetadata.value(forKeyPath: "upvotes") as! Int + 1)
-                newMetadata.setValue(value, forKey: "upvotes")
-                
+
+              // dump(newMetadata.customMetadata!["downvotes"]!)
+               
             }
         }
         
     }
     
+    func getMetadata() {
+        ref.metadata { (metaData, error) in
+            if let error = error {
+                print("Error ----- \(error.localizedDescription)")
+            }
+            else {
+                
+                let upvotesMetadata = metaData?.customMetadata!["upvotes"]!
+                let downvotesMetadata = metaData?.customMetadata!["downvotes"]!
+                
+                print("Upvotes  --------- \(upvotesMetadata!)")
+                self.upvotes = Int(upvotesMetadata!)!
+                self.downvotes = Int(downvotesMetadata!)!
+            }
+        }
+        
+    }
+    
+    func updateVoteLabels() {
+        self.upvotesLabel.text = String(upvotes)
+        self.downvotesLabel.text = String(downvotes)
+    }
     
     func configureConstraints() {
         self.imageContainerView.snp.makeConstraints { (view) in
@@ -108,7 +134,7 @@ class DisplayImageViewController: UIViewController {
             view.leading.equalTo(votesContainerView.snp.leading)
         }
         self.upvoteButton.snp.makeConstraints { (view) in
-           view.top.equalTo(votesContainerView.snp.top).offset(10.0)
+            view.top.equalTo(votesContainerView.snp.top).offset(10.0)
             view.centerX.equalTo(upvotesLabel.snp.centerX)
             view.height.equalTo(20)
             view.width.size.equalTo(20.0)
@@ -178,5 +204,5 @@ class DisplayImageViewController: UIViewController {
         label.text = "0"
         return label
     }()
-
+    
 }
