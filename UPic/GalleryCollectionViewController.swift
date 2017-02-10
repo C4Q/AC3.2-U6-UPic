@@ -18,6 +18,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     let reuseIdentifier = "GalleryCell"
     var colView: UICollectionView!
     let ref = FIRDatabase.database().reference()
+    var metaRef: FIRStorageReference!
     var imageURLs: [URL] = []
     var imagesToLoad = [UIImage]()
     var refArr: [FIRStorageReference] = []
