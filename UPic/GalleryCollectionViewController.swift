@@ -111,10 +111,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                         let pic = UIImage(data: data)
                         
                         //If Image isn't in Cache, insert it for future use
+                        DispatchQueue.main.async {
                         imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
                         self.imagesToLoad.append(pic!)
-                        
-                        DispatchQueue.main.async {
                             self.colView.reloadData()
                         }
                     }
