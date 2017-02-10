@@ -84,7 +84,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         userReference.observe(.childAdded, with: { (snapshot) in
             
             self.imageTitleArr.append(snapshot.key)
-            
             if snapshot.childrenCount != 0 {
                 let downloadURL = snapshot.childSnapshot(forPath: "url").value as! String
                 
@@ -101,7 +100,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                     DispatchQueue.main.async {
                         self.colView.reloadData()
                     }
-                    
                     return
                 }
                 
