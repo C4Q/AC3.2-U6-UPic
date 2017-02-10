@@ -56,21 +56,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window?.makeKeyAndVisible()
         
-        if FIRAuth.auth()?.currentUser != nil && FIRAuth.auth()?.currentUser?.isAnonymous == false {
-            do {
+        if FIRAuth.auth()?.currentUser != nil {
+        do {
                 try FIRAuth.auth()?.signOut()
             }
             catch {
                 print(error)
             }
-        } else {
+        }
+       
             do {
                 FIRAuth.auth()?.signInAnonymously() { (user, error) in
                     _ = user!.isAnonymous  // true
                     _ = user!.uid
                 }
             }
-        }
+        
         
         return true
     }
