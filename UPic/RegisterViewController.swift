@@ -215,6 +215,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                     make.height.equalTo(15.0)
                 })
                 self.view.layoutIfNeeded()
+                self.propertyAnimator?.startAnimation()
             }
         }
         
@@ -228,6 +229,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                     make.height.equalTo(15.0)
                 })
                 self.view.layoutIfNeeded()
+                self.propertyAnimator?.startAnimation()
             }
         }
         
@@ -241,6 +243,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                     make.height.equalTo(15.0)
                 })
                 self.view.layoutIfNeeded()
+                self.propertyAnimator?.startAnimation()
             }
         }
         
@@ -277,7 +280,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                 }
             })
         }
-        propertyAnimator?.startAnimation()
     }
     
     func didTapCancel(sender: UIButton) {
