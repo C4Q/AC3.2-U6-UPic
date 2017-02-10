@@ -205,12 +205,15 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
+        print(userVotes.count)
         return userVotes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierTableView, for: indexPath) as! VotersFeedTableViewCell
+        
+        
         
         cell.textLabel?.text = userVotes[indexPath.row]
         
@@ -226,10 +229,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             if snapshot.key == "upvote" {
                 self.userVotes.append(snapshot.value as! String)
             }
+            DispatchQueue.main.async {
+                self.userTableView.reloadData()
+            }
         })
-        DispatchQueue.main.async {
-            self.userTableView.reloadData()
-        }
+       
     }
 
     
