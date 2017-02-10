@@ -39,6 +39,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         selectedImageView.setNeedsLayout()
         getVoters()
         
+        navigationItem.title = imageTitle.uppercased()
         
     }
     
