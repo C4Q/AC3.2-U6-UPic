@@ -78,7 +78,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.view.addSubview(imagesCollectionView)
         self.view.addSubview(topImagesCollectionView)
         self.view.addSubview(progressContainerView)
-
+        
         self.topContainerView.addSubview(titleTextField)
         self.topContainerView.addSubview(scrollView)
         
@@ -271,19 +271,19 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                         
                         UIView.animate(withDuration: 1.0, animations: {
                             self.progressContainerView.alpha = 0.0
-                            }, completion: { finished in
-                                
-                                _ = self.dynamicAnimator?.behaviors.map {
-                                    if $0 is UISnapBehavior {
-                                        self.dynamicAnimator?.removeBehavior($0)
-                                    }
+                        }, completion: { finished in
+                            
+                            _ = self.dynamicAnimator?.behaviors.map {
+                                if $0 is UISnapBehavior {
+                                    self.dynamicAnimator?.removeBehavior($0)
                                 }
-
-                                let snap = UISnapBehavior(item: self.progressContainerView, snapTo: CGPoint(x: self.view.frame.minX - 100.0, y: self.view.frame.midY - 100.0))
-                                snap.damping = 0.9
-                                self.dynamicAnimator?.addBehavior(snap)
-                                self.progressLabel.text = "UPLOADING..."
-                                self.progressBar.isHidden = false
+                            }
+                            
+                            let snap = UISnapBehavior(item: self.progressContainerView, snapTo: CGPoint(x: self.view.frame.minX - 100.0, y: self.view.frame.midY - 100.0))
+                            snap.damping = 0.9
+                            self.dynamicAnimator?.addBehavior(snap)
+                            self.progressLabel.text = "UPLOADING..."
+                            self.progressBar.isHidden = false
                         })
                     }
                     
@@ -490,7 +490,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             layer.borderWidth = 1.0
             layer.borderColor = ColorPalette.textIconColor.cgColor
         }
-
+        
         return segmentedControl
     }()
     
