@@ -69,11 +69,13 @@ class CategoryViewController: UITableViewController, CellTitled {
         
         switch (indexPath.section) {
         case (0):
-            //TODO: set image
+            cell.newImage.image = #imageLiteral(resourceName: "woofmeow")
             cell.newLabel.text = "WOOFS & MEOWS"
         case (1):
+            cell.newImage.image = #imageLiteral(resourceName: "nature")
             cell.newLabel.text = "NATURE"
         default:
+            cell.newImage.image = #imageLiteral(resourceName: "architecture")
             cell.newLabel.text = "ARCHITECTURE"
         }
         

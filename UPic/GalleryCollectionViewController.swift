@@ -79,7 +79,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func loadCollectionImages(category: GallerySections) {
         
         let userReference = FIRDatabase.database().reference().child("categories").child(category.rawValue)
-        print(userReference)
+        
         userReference.observe(.childAdded, with: { (snapshot) in
             
             self.imageTitleArr.append(snapshot.key)
@@ -94,11 +94,13 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                 if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
                     
                     self.imagesToLoad.append(cachedImage)
+
                     self.imageURLs.append(URL(string: downloadURL)!)
+
                     DispatchQueue.main.async {
                         self.colView.reloadData()
                     }
-                    dump(cachedImage)
+                    
                     return
                 }
                 
