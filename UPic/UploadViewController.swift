@@ -50,8 +50,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        titleTextField.styled(placeholder: "TITLE")
-
+        titleTextField.styled(placeholder: "title")
+        
     }
     
     func setupViewHierarchy() {
@@ -77,7 +77,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         catogorySegmentedControl.tintColor = ColorPalette.accentColor
         catogorySegmentedControl.setTitleTextAttributes([NSForegroundColorAttributeName: ColorPalette.textIconColor], for: UIControlState.normal)
         catogorySegmentedControl.setDividerImage(imageWithColor(color: ColorPalette.primaryColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-  
+        
         for layer in catogorySegmentedControl.layer.sublayers! {
             layer.borderWidth = 1.0
             layer.borderColor = ColorPalette.textIconColor.cgColor
@@ -192,11 +192,20 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     internal func didTapUpload(sender: UIButton) {
+        
         progressContainerView.isHidden = false
         print("From upload, users UID \(FIRAuth.auth()?.currentUser?.uid)")
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
         let imageName = NSUUID().uuidString
         let user = FIRAuth.auth()?.currentUser
+        
+        guard user?.isAnonymous == false else {
+            let alert = UIAlertController(title: "Error", message: "Register Before You Try To Upload A Pic", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         
         if user?.uid != nil {
             
@@ -210,9 +219,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 "downvotes": "0"
             ]
             
-        metaData.setValue(dict, forKey: "customMetadata")
+            metaData.setValue(dict, forKey: "customMetadata")
             let imageRef = storageRef.child("\(imageName).png")
-    
             
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
                 let task = imageRef.put(uploadData, metadata: metaData, completion: { (metadata, error) in
@@ -220,13 +228,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                         print(error!.localizedDescription)
                     }
                     
-                    //                let autoKey = FIRDatabase.database().reference().child("users").child((user?.uid)!).childByAutoId().key
+                    let urlString = String(describing: metadata!.downloadURL()!)
+                    let dict = ["url": urlString, "upvotes": [""], "downvotes": [""]] as [String : Any]
                     
-                    databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).updateChildValues([self.titleTextField.text!: String(describing: metadata!.downloadURL()!)])
-       
- 
                     databaseRef.child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
-
+                    
+                    
+                    databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).child("image").updateChildValues(dict)
+                    
                     print((String(describing: metadata!.downloadURL()!)))
                     
                 })
@@ -389,7 +398,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         topImagesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         progressContainerView.isHidden = true
-    
+        
     }
     
     internal lazy var topContainerView: UIView! = {

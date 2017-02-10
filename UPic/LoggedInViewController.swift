@@ -36,7 +36,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
         dump(self.userReference)
         dump(FIRStorage.storage().reference())
-        downloadImages()
+        //downloadImages()
         //imagesCollectionView.clearsSelectionOnViewWillAppear = false
     }
     
