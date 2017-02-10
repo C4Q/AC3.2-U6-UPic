@@ -29,6 +29,7 @@ class DisplayImageViewController: UIViewController {
         selectedImageView.setNeedsLayout()
         
         getMetadata()
+        updateVoteLabels()
         
     }
     
@@ -49,35 +50,40 @@ class DisplayImageViewController: UIViewController {
     
     internal func upvoteButtonTapped(sender: UIButton) {
         
-        print("Upvote Tapped")
+        upvotes += 1
         editMetaData()
+        updateVoteLabels()
         
     }
     
     internal func downvoteButtonTapped(sender: UIButton) {
         
-        print("Downvote Tapped")
-        
+        downvotes += 1
+        editMetaData()
+        updateVoteLabels()
     }
     
     func editMetaData() {
         
-        // Create file metadata to update
         let newMetadata = FIRStorageMetadata()
-        newMetadata.cacheControl = "public,max-age=300"
+//        newMetadata.cacheControl = "public,max-age=300"
         newMetadata.contentType = "image/jpeg"
-        newMetadata.customMetadata!["upvotes"] = (String(self.upvotes+1))
+        
+        let dict = [
+            "upvotes": String(upvotes),
+            "downvotes": String(downvotes)
+        ]
+        
+        newMetadata.setValue(dict, forKey: "customMetadata")
         
         self.ref.update(newMetadata) { metadata, error in
             if let error = error {
-                // Uh-oh, an error occurred!
                 print("Error ----- \(error.localizedDescription)")
                 
             } else {
-                dump(metadata)
-                // Updated metadata for 'images/forest.jpg' is returned
+
+              // dump(newMetadata.customMetadata!["downvotes"]!)
                
-                
             }
         }
         
@@ -93,12 +99,17 @@ class DisplayImageViewController: UIViewController {
                 let upvotesMetadata = metaData?.customMetadata!["upvotes"]!
                 let downvotesMetadata = metaData?.customMetadata!["downvotes"]!
                 
+                print("Upvotes  --------- \(upvotesMetadata!)")
                 self.upvotes = Int(upvotesMetadata!)!
                 self.downvotes = Int(downvotesMetadata!)!
-                print(self.upvotes)
             }
         }
         
+    }
+    
+    func updateVoteLabels() {
+        self.upvotesLabel.text = String(upvotes)
+        self.downvotesLabel.text = String(downvotes)
     }
     
     func configureConstraints() {
