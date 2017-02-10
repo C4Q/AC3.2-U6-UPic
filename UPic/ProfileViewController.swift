@@ -161,7 +161,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     internal func animateLogo() {
     
-        UIView.animate(withDuration: 0.25, delay: 0, options: .autoreverse, animations: {
+        UIView.animate(withDuration: 0.25, delay: 0.3, options: .autoreverse, animations: {
             
             let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
             let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
@@ -171,7 +171,7 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
                 self.UPicLogo.transform = CGAffineTransform.identity
             })
         
-        UIView.animate(withDuration: 0.15, delay: 0.15, animations: {
+        UIView.animate(withDuration: 0.15, delay: 0.3, animations: {
             self.view.backgroundColor = .white
             }, completion: {
                 finished in
