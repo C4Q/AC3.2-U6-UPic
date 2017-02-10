@@ -222,10 +222,13 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         let userReference = FIRDatabase.database().reference().child("users").child(user!).child("upvotes")
         
         userReference.observe(.childAdded, with: { (snapshot) in
-            var userArray = [String]()
            
             if snapshot.key == "upvote" {
-               userArray.append(snapshot.value as! String)
+               self.userVotes.append("You upvoted \(snapshot.value as! String)")
+            }
+            
+            if snapshot.key == "downvote" {
+                self.userVotes.append("You downvoted \(snapshot.value as! String)")
             }
 
             DispatchQueue.main.async {
