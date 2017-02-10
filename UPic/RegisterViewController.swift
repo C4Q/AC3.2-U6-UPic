@@ -287,8 +287,8 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                                     "password": self.passwordTextField.text!,
                                     "username": self.usernameTextField.text!,
                                     "email" : self.emailTextField.text!,
-                                    "profileImageURL" : [self.usernameTextField.text! : metadataURL]
-                                ] as [String : Any]
+                                    "profileImageURL" : metadataURL
+                                ]
                                 
                                 self.registerUser(uid: (user?.uid)! ,values: values as [String : Any])
                                 self.dismiss(animated: true, completion: nil)
