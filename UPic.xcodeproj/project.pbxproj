@@ -117,7 +117,7 @@
 				9B0DBF4E1E4E3D7200EFDEB7 /* GoogleService-Info.plist */,
 				47E4E5231E48E6F700C5FDBF /* LaunchScreen.storyboard */,
 				47E4E5261E48E6F700C5FDBF /* Info.plist */,
-				47E40C7F1E4E48E5003D3DAF /* GoogleService-Info.plist */,
+
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -246,7 +246,8 @@
 			files = (
 				47E4E5251E48E6F700C5FDBF /* LaunchScreen.storyboard in Resources */,
 				47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */,
-				47E40C801E4E48E5003D3DAF /* GoogleService-Info.plist in Resources */
+				9B0DBF4F1E4E3D7200EFDEB7 /* GoogleService-Info.plist in Resources */,
+
 				47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */,
 				3EF2F3E11E4B6E9B00F0AF81 /* TopCollectionViewCell.xib in Resources */,
 			);
