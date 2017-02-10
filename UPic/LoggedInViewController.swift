@@ -32,7 +32,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         setupViewHierarchy()
         configureConstraints()
         self.navigationItem.hidesBackButton = true
-        self.profileImage.image = #imageLiteral(resourceName: "user_icon")
         dump(FIRStorage.storage().reference())
         downloadProfileImage()
         downloadUserUploads()
