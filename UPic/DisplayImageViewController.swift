@@ -69,9 +69,11 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         let userRef = FIRDatabase.database().reference().child("users")
         var idToName: (id: String,name: String) = ("","")
         
+        if FIRAuth.auth()?.currentUser?.isAnonymous == false {
+        
         userRef.observe(.childAdded, with: { (snapshot) in
             
-            if snapshot.childSnapshot(forPath: "username").value as! String == username {
+            if snapshot.childSnapshot(forPath: "username").value as? String != nil {
                 
                 idToName.id = snapshot.key
                 idToName.name = snapshot.childSnapshot(forPath: "username").value as! String
@@ -117,6 +119,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                 })
             }
         })
+    }
     }
     
     
