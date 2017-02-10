@@ -24,6 +24,9 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     var imageTitle: String!
     var votersFeedTableView: UITableView = UITableView()
     var allVotingsFeed: [String] = []
+    var allVoters: [String] = []
+    var profileIdToName: [String:String] = [:]
+    var profileIdToImage: [String:UIImage] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,6 +66,67 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     
+    func downloadProfileImage(username: String) {
+        let userRef = FIRDatabase.database().reference().child("users")
+        var idToName: (id: String,name: String) = ("","")
+        var profileImage: UIImage!
+        
+        userRef.observe(.childAdded, with: { (snapshot) in
+            
+            if snapshot.childSnapshot(forPath: "username").value as! String == username {
+                
+                idToName.id = snapshot.key
+                idToName.name = snapshot.childSnapshot(forPath: "username").value as! String
+
+                userRef.child(idToName.id).observe(.value, with: { (snapshot) in
+                    dump(snapshot)
+                    
+                    if let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as? String {
+                        
+                      //  dump(profileImageURL)
+                        if let cachedProfilePic = imageCache.object(forKey: profileImageURL as AnyObject) as? UIImage {
+                            DispatchQueue.main.async {
+                                self.view.layoutSubviews()
+                                profileImage = cachedProfilePic
+                                self.profileIdToImage[idToName.name] = cachedProfilePic
+                                dump(cachedProfilePic)
+                                DispatchQueue.main.async {
+                                    self.votersFeedTableView.reloadData()
+                                }
+                            }
+                            
+                            return
+                        }
+                        
+                        // Download Image If Not Found In Cache. Insert into cache as well
+                        let storageRef = FIRStorage.storage().reference(forURL: profileImageURL)
+                        
+                        storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
+                            
+                            if let data = data {
+                                let pic = UIImage(data: data)
+                                imageCache.setObject(pic!, forKey: profileImageURL as AnyObject)
+                                DispatchQueue.main.async {
+                                    self.view.layoutSubviews()
+                                    profileImage = pic
+                                    self.profileIdToImage[idToName.name] = pic
+                                    dump(pic)
+                                    DispatchQueue.main.async {
+                                        self.votersFeedTableView.reloadData()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                })
+                
+            }
+            
+        })
+        
+    }
+    
     
     func getVoters() {
         let databaseRef = FIRDatabase.database().reference()
@@ -76,6 +140,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             
             if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
                 upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
+                
             }
             
             if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
@@ -84,18 +149,24 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             
             for name in upvoters {
                 if name != "" {
-                    votingFeed.append("\(name) upvoted up.")
+                    votingFeed.append("\(name) voted up.")
+                    self.allVoters.append(name)
+                    self.downloadProfileImage(username: name)
                 }
             }
             
             for name in downvoters {
                 if name != "" {
+                    self.allVoters.append(name)
                     votingFeed.append("\(name) voted down.")
+                    self.downloadProfileImage(username: name)
                 }
             }
             
             self.allVotingsFeed = votingFeed
-            self.votersFeedTableView.reloadData()
+            DispatchQueue.main.async {
+                self.votersFeedTableView.reloadData()
+            }
         })
     }
     
@@ -110,6 +181,12 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
         
         cell.textLabel?.text = allVotingsFeed[indexPath.row]
+        
+        if profileIdToImage[allVotingsFeed[indexPath.row]] != nil {
+            
+            print(profileIdToImage[allVotingsFeed[indexPath.row]])
+        cell.imageView?.image = profileIdToImage[allVotingsFeed[indexPath.row]]
+        }
         
         return cell
     }
