@@ -19,6 +19,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     var activeField: UITextField?
     var propertyAnimator: UIViewPropertyAnimator?
     var dynamicAnimator: UIDynamicAnimator?
+    var needsAnimating = false
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -215,8 +216,8 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                     make.height.equalTo(15.0)
                 })
                 self.view.layoutIfNeeded()
-                self.propertyAnimator?.startAnimation()
             }
+            self.propertyAnimator?.startAnimation()
         }
         
         // Email
@@ -229,8 +230,8 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                     make.height.equalTo(15.0)
                 })
                 self.view.layoutIfNeeded()
-                self.propertyAnimator?.startAnimation()
             }
+            self.propertyAnimator?.startAnimation()
         }
         
         // Password
@@ -243,8 +244,8 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                     make.height.equalTo(15.0)
                 })
                 self.view.layoutIfNeeded()
-                self.propertyAnimator?.startAnimation()
             }
+            self.propertyAnimator?.startAnimation()
         }
         
         // Login
