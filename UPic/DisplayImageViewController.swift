@@ -222,7 +222,6 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         let voterName = allVoters[indexPath.row]
         
         if profileIdToImage[allVoters[indexPath.row]] != nil {
-            cell.imageView?.contentMode = .scaleAspectFit
             cell.imageView?.image = profileIdToImage[voterName]!
         }
         
