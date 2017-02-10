@@ -25,6 +25,8 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     var imagesCollectionView: UICollectionView!
     var userTableView: UITableView = UITableView()
     var userVotes: [String] = []
+    var userUpvotes: [String] = []
+    var userDownvotes: [String] = []
     var user = FIRAuth.auth()?.currentUser?.uid
 
     var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
@@ -149,7 +151,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             storageRef.data(withMaxSize: 1 * 2000 * 2000) { (data, error) -> Void in
                 if error != nil {
-                    print(error?.localizedDescription)
+                    print(error!.localizedDescription)
                     return
                 }
                 if let data = data {
@@ -205,7 +207,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        print(userVotes.count)
         return userVotes.count
     }
     
@@ -228,6 +229,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
            
             if snapshot.key == "upvote" {
                 self.userVotes.append(snapshot.value as! String)
+                self.userUpvotes.append(snapshot.value as! String)
+            }
+            if snapshot.key == "downvote" {
+                self.userVotes.append(snapshot.value as! String)
+                self.userDownvotes.append(snapshot.value as! String)
             }
             DispatchQueue.main.async {
                 self.userTableView.reloadData()
@@ -263,7 +269,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
-                    print(error)
+                    print(error?.localizedDescription)
                     return
                 }
                 if let metadataURL = metadata?.downloadURL()?.absoluteString {
