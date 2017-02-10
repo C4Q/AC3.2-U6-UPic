@@ -210,7 +210,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierTableView, for: indexPath) as! VotersFeedTableViewCell
         
         cell.textLabel?.text = userVotes[indexPath.row]
         
@@ -221,11 +221,12 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         let userReference = FIRDatabase.database().reference().child("users").child(user!).child("upvotes")
         
         userReference.observe(.childAdded, with: { (snapshot) in
-            
+            var userArray = [String]()
            
             if snapshot.key == "upvote" {
-                self.userVotes.append(snapshot.value as! String)
+               userArray.append(snapshot.value as! String)
             }
+            self.
         })
         DispatchQueue.main.async {
             self.userTableView.reloadData()
