@@ -10,7 +10,7 @@ import UIKit
 
 class VotersFeedTableViewCell: UITableViewCell {
     
-//    var imageView: UIImageView!
+ //   var imageView: UIImageView!
 //    var textLabel: UILabel!
 
     override func awakeFromNib() {
