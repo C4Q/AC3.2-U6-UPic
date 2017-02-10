@@ -39,6 +39,11 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         configureConstraints()
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        colView.collectionViewLayout.invalidateLayout()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -48,9 +53,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         self.edgesForExtendedLayout = []
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: view.frame.width / 2, height: view.frame.height/3)
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
         
         colView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         colView.delegate = self
@@ -120,16 +122,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
        // dump(imageTitleArr)
     }
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using [segue destinationViewController].
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
     // MARK: UICollectionViewDataSource
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -167,6 +159,23 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         
     }
     
+    //TODO: Fix Collection View Overlap
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: colView.frame.size.width/2, height: colView.frame.size.width/2)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0.0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout
+        collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0.0
+    }
+    
     // MARK: UICollectionViewDelegate
     
     /*
@@ -199,3 +208,4 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
      */
     
 }
+

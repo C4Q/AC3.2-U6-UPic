@@ -19,14 +19,18 @@ enum Catagory: String {
     case architecture = "ARCHITECTURE"
 }
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CellTitled {
+    
+    // MARK: - Properties
+    let titleForCell: String = "UPLOAD"
+    var dynamicAnimator: UIDynamicAnimator?
     
     var imagesCollectionView: UICollectionView!
     var topImagesCollectionView: UICollectionView!
-    //var catagories: [Catagory] = [.animals, .nature, .architecture]
     var catagories = ["WOOFS & MEOWS","NATURE", "ARCHITECTURE" ]
-    var assetsArr: [PHAsset] = []
     var selectedSegment: Catagory = .animals
+    
+    var assetsArr: [PHAsset] = []
     var selectedIndex = 0
     var selectedImage: UIImage?
     
@@ -37,15 +41,22 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let topCollectionViewNibName = "TopCollectionViewCell"
     let topCollectionViewItemSize = CGSize(width: 300, height: 300)
     
+    
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "UPLOAD"
         setupViewHierarchy()
         configureConstraints()
         
         getMoments()
         progressContainerView.isHidden = true
+        dynamicAnimator = UIDynamicAnimator(referenceView: view)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.titleTextField.text = ""
     }
     
     override func viewDidLayoutSubviews() {
@@ -55,41 +66,28 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setupViewHierarchy() {
+        self.navigationItem.title = titleForCell
+        navigationController?.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
+        navigationController?.navigationBar.barTintColor = ColorPalette.darkPrimaryColor
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "up_arrow"), style: .plain, target: self, action: #selector(didTapUpload))
+        navigationItem.rightBarButtonItem?.tintColor = ColorPalette.accentColor
         
         createBottomCollectionView()
         createTopCollectionView()
         self.view.addSubview(topContainerView)
-        titleTextField.textColor = ColorPalette.accentColor
+        self.view.addSubview(imagesCollectionView)
+        self.view.addSubview(topImagesCollectionView)
+        self.view.addSubview(progressContainerView)
+
         self.topContainerView.addSubview(titleTextField)
         self.topContainerView.addSubview(scrollView)
         
-        self.view.addSubview(imagesCollectionView)
-        //        self.view.addSubview(selectedImageView)
-        self.view.addSubview(topImagesCollectionView)
-        
-        navigationController?.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "up_arrow"), style: .plain, target: self, action: #selector(didTapUpload))
-        navigationItem.rightBarButtonItem?.tintColor = ColorPalette.accentColor
-        
-        catogorySegmentedControl = UISegmentedControl(items: catagories)
-        catogorySegmentedControl.selectedSegmentIndex = 0
-        catogorySegmentedControl.addTarget(self, action: #selector(didSelectSegment(sender:)), for: .valueChanged)
-        catogorySegmentedControl.tintColor = ColorPalette.accentColor
-        catogorySegmentedControl.setTitleTextAttributes([NSForegroundColorAttributeName: ColorPalette.textIconColor], for: UIControlState.normal)
-        catogorySegmentedControl.setDividerImage(imageWithColor(color: ColorPalette.primaryColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-        
-        for layer in catogorySegmentedControl.layer.sublayers! {
-            layer.borderWidth = 1.0
-            layer.borderColor = ColorPalette.textIconColor.cgColor
-        }
-        
-        self.scrollView.addSubview(catogorySegmentedControl)
-        
-        self.view.addSubview(progressContainerView)
         self.progressContainerView.addSubview(progressBar)
         self.progressContainerView.addSubview(progressLabel)
         
-        
+        categorySegmentedControl.addTarget(self, action: #selector(didSelectSegment(sender:)), for: .valueChanged)
+        categorySegmentedControl.setDividerImage(imageWithColor(color: ColorPalette.primaryColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+        self.scrollView.addSubview(categorySegmentedControl)
     }
     
     func configureConstraints() {
@@ -100,28 +98,33 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.top.equalToSuperview().offset(targetHeight!)
             view.height.equalTo(100.0)
         }
+        
         imagesCollectionView.snp.makeConstraints { (view) in
             view.bottom.leading.trailing.equalToSuperview()
             view.height.equalTo(175.0)
         }
+        
         topImagesCollectionView.snp.makeConstraints { (view) in
             view.top.equalTo(topContainerView.snp.bottom)
             view.leading.trailing.equalToSuperview()
             view.bottom.equalTo(imagesCollectionView.snp.top)
         }
+        
         titleTextField.snp.makeConstraints { (view) in
             view.top.equalTo(topContainerView.snp.top).offset(40.0)
             view.leading.equalTo(topContainerView.snp.leading).offset(15.0)
             view.trailing.equalTo(topContainerView.snp.trailing).inset(15.0)
             view.height.equalTo(20.0)
         }
+        
         scrollView.snp.makeConstraints { (view) in
             view.bottom.equalTo(topContainerView.snp.bottom).inset(8.0)
             view.trailing.leading.equalTo(topContainerView)
             view.height.equalTo(30.0)
             
         }
-        catogorySegmentedControl.snp.makeConstraints { (view) in
+        
+        categorySegmentedControl.snp.makeConstraints { (view) in
             view.leading.equalTo(scrollView).offset(8.0)
             view.trailing.equalTo(scrollView).inset(8.0)
             view.centerY.equalTo(scrollView)
@@ -129,7 +132,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         progressContainerView.snp.makeConstraints { (view) in
-            view.center.equalTo(topImagesCollectionView.snp.center)
+            view.trailing.equalTo(self.view.snp.leading).inset(20.0)
+            view.centerY.equalTo(topImagesCollectionView).inset(40.0)
             view.height.equalTo(60.0)
             view.width.equalTo(200.0)
         }
@@ -149,41 +153,45 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
     }
     
+    // MARK: - Instantiate Top & Bottom Collection Views
     func createBottomCollectionView() {
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        // layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.itemSize = bottomCollectionViewItemSize
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         layout.scrollDirection = .horizontal
+        
         imagesCollectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
+        
         imagesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         let nib = UINib(nibName: bottomCollectionViewNibName, bundle:nil)
         imagesCollectionView.register(nib, forCellWithReuseIdentifier: reuseIdentifier)
+        
         imagesCollectionView.backgroundColor = .white
     }
     
     func createTopCollectionView() {
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        // layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        //layout.itemSize = topImagesCollectionView.contentSize
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         layout.scrollDirection = .horizontal
+        
         topImagesCollectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         topImagesCollectionView.delegate = self
         topImagesCollectionView.dataSource = self
-        //        topImagesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        //        let nib = UINib(nibName: bottomCollectionViewNibName, bundle:nil)
-        //        topImagesCollectionView.register(nib, forCellWithReuseIdentifier: reuseIdentifier)
+        
         topImagesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: topCollectionViewIdentifier)
         let nib = UINib(nibName: topCollectionViewNibName, bundle:nil)
         topImagesCollectionView.register(nib, forCellWithReuseIdentifier: topCollectionViewIdentifier)
+        
         topImagesCollectionView.backgroundColor = .white
     }
     
+    // MARK: - Actions
     internal func didSelectSegment(sender: UISegmentedControl) {
         selectedSegment = Catagory(rawValue: catagories[sender.selectedSegmentIndex])!
         
@@ -193,14 +201,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     internal func didTapUpload(sender: UIButton) {
         
-        progressContainerView.isHidden = false
         print("From upload, users UID \(FIRAuth.auth()?.currentUser?.uid)")
         print("From upload, users display name \(FIRAuth.auth()?.currentUser?.displayName)")
         let imageName = NSUUID().uuidString
         let user = FIRAuth.auth()?.currentUser
         
         guard user?.isAnonymous == false else {
-            let alert = UIAlertController(title: "Error", message: "Register Before You Try To Upload A Pic", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Error", message: "Please Log In", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(ok)
             self.present(alert, animated: true, completion: nil)
@@ -223,7 +230,22 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let imageRef = storageRef.child("\(imageName).png")
             
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
+                
+                // Animating progress bar
+                progressContainerView.isHidden = false
+                self.progressContainerView.alpha = 1.0
+                
+                _ = self.dynamicAnimator?.behaviors.map {
+                    if $0 is UISnapBehavior {
+                        self.dynamicAnimator?.removeBehavior($0)
+                    }
+                }
+                let snap = UISnapBehavior(item: progressContainerView, snapTo: CGPoint(x: self.view.frame.midX, y: self.view.frame.midY))
+                dynamicAnimator?.addBehavior(snap)
+                
+                // Meta Data Task
                 let task = imageRef.put(uploadData, metadata: metaData, completion: { (metadata, error) in
+                    
                     if error != nil {
                         print(error!.localizedDescription)
                     }
@@ -233,19 +255,36 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     
                     databaseRef.child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
                     
-                    
-                    databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).child(self.titleTextField.text!).updateChildValues(dict)
+                    databaseRef.child("categories").child(self.categorySegmentedControl.titleForSegment(at: self.categorySegmentedControl.selectedSegmentIndex)!).child(self.titleTextField.text!).updateChildValues(dict)
                     
                     print((String(describing: metadata!.downloadURL()!)))
                     
                 })
                 
-                let _ = task.observe(.progress){ (snapshot) in
+                
+                let _ = task.observe(.progress) { (snapshot) in
                     
                     let progress = Float((snapshot.progress?.fractionCompleted)!)
                     if progress == 1.0 {
                         self.progressBar.isHidden = true
                         self.progressLabel.text = "SUCCESS!"
+                        
+                        UIView.animate(withDuration: 1.0, animations: {
+                            self.progressContainerView.alpha = 0.0
+                            }, completion: { finished in
+                                
+                                _ = self.dynamicAnimator?.behaviors.map {
+                                    if $0 is UISnapBehavior {
+                                        self.dynamicAnimator?.removeBehavior($0)
+                                    }
+                                }
+
+                                let snap = UISnapBehavior(item: self.progressContainerView, snapTo: CGPoint(x: self.view.frame.minX - 100.0, y: self.view.frame.midY - 100.0))
+                                snap.damping = 0.9
+                                self.dynamicAnimator?.addBehavior(snap)
+                                self.progressLabel.text = "UPLOADING..."
+                                self.progressBar.isHidden = false
+                        })
                     }
                     
                     self.progressBar.progress = progress
@@ -254,13 +293,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             }
         }
         else {
-            let alert = UIAlertController(title: "Error", message: "You need to log in to upload images", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Error", message: "Log in to upload please", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(ok)
             self.present(alert, animated: true, completion: nil)
         }
     }
     
+    // MARK: - PHAsset & PHCollection
     func getAssets(collection: PHAssetCollection) -> [PHAsset] {
         
         let assets = PHAsset.fetchAssets(in: collection, options: nil)
@@ -300,6 +340,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
+    // MARK: - Collection View Data Source
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -401,6 +442,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
     }
     
+    // MARK: - Lazy Instantiations
     internal lazy var topContainerView: UIView! = {
         let view = UIView()
         view.backgroundColor = ColorPalette.primaryColor
@@ -428,7 +470,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     internal lazy var progressLabel: UILabel! = {
         let label = UILabel()
-        //label.tintColor = ColorPalette.accentColor
         label.textColor = ColorPalette.accentColor
         label.text = "UPLOADING..."
         label.textAlignment = .center
@@ -440,8 +481,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return textField
     }()
     
-    internal lazy var catogorySegmentedControl: UISegmentedControl! = {
-        let segmentedControl = UISegmentedControl()
+    internal lazy var categorySegmentedControl: UISegmentedControl! = {
+        var segmentedControl = UISegmentedControl()
+        segmentedControl = UISegmentedControl(items: self.catagories)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.tintColor = ColorPalette.accentColor
+        segmentedControl.setTitleTextAttributes([NSForegroundColorAttributeName: ColorPalette.textIconColor], for: UIControlState.normal)
+        
+        for layer in segmentedControl.layer.sublayers! {
+            layer.borderWidth = 1.0
+            layer.borderColor = ColorPalette.textIconColor.cgColor
+        }
+
         return segmentedControl
     }()
     
