@@ -207,7 +207,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let user = FIRAuth.auth()?.currentUser
         
         guard user?.isAnonymous == false else {
-            let alert = UIAlertController(title: "Error", message: "Please Log In", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Error", message: "Please Register", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(ok)
             self.present(alert, animated: true, completion: nil)
