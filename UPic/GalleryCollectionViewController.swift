@@ -22,6 +22,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     var imagesToLoad = [UIImage]()
     var refArr: [FIRStorageReference] = []
     var category: GallerySections!
+    var downloadURL = ""
+    var imageName = ""
+    var imageTitleArr: [String] = []
     
     
     // MARK: - View Lifecycle
@@ -76,6 +79,8 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         print(userReference)
         userReference.observe(.childAdded, with: { (snapshot) in
             
+            self.imageTitleArr.append(snapshot.key)
+            
             if snapshot.childrenCount != 0 {
                 let downloadURL = snapshot.childSnapshot(forPath: "url").value
                 
@@ -114,7 +119,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             }
             
         })
-        
+       // dump(imageTitleArr)
     }
     
     // MARK: UICollectionViewDataSource
@@ -144,9 +149,12 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let displayImageVC = DisplayImageViewController()
-        displayImageVC.image = self.imagesToLoad[indexPath.row]
-        displayImageVC.imageUrl = self.imageURLs[indexPath.row]
-        displayImageVC.ref = self.refArr[indexPath.row]
+        let index = indexPath.row
+        displayImageVC.image = self.imagesToLoad[index]
+        displayImageVC.imageUrl = self.imageURLs[index]
+        displayImageVC.ref = self.refArr[index]
+        displayImageVC.category = category
+        displayImageVC.imageTitle = self.imageTitleArr[index]
         self.navigationController?.pushViewController(displayImageVC, animated: false)
         
     }

@@ -10,31 +10,40 @@ import UIKit
 import SnapKit
 import FirebaseDatabase
 import FirebaseStorage
+import FirebaseAuth
 
-class DisplayImageViewController: UIViewController {
+class DisplayImageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    let reuseIdentifier = "votersFeedCell"
     var image: UIImage!
     var imageUrl: URL!
     var ref: FIRStorageReference!
     var upvotes = 0
     var downvotes = 0
+    var category: GallerySections!
+    var imageTitle: String!
+    var votersFeedTableView: UITableView = UITableView()
+    var allVotings: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupViewHierarchy()
         configureConstraints()
-        
+        self.votersFeedTableView.rowHeight = 50
         selectedImageView.contentMode = .scaleToFill
         selectedImageView.image = image
         selectedImageView.setNeedsLayout()
         
+        allVotings = getAllVoters()
         getMetadata()
-        updateVoteLabels()
         
     }
     
     func setupViewHierarchy() {
         self.view.addSubview(imageContainerView)
+        
+        
         imageContainerView.addSubview(selectedImageView)
         imageContainerView.addSubview(votesContainerView)
         votesContainerView.addSubview(upvoteButton)
@@ -44,8 +53,10 @@ class DisplayImageViewController: UIViewController {
         
         upvoteButton.addTarget(self, action: #selector(upvoteButtonTapped(sender:)), for: .touchUpInside)
         downvoteButton.addTarget(self, action: #selector(downvoteButtonTapped(sender:)), for: .touchUpInside)
-        
-        
+        votersFeedTableView.delegate = self
+        votersFeedTableView.dataSource = self
+        self.view.addSubview(votersFeedTableView)
+        votersFeedTableView.register(VotersFeedTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
     }
     
     internal func upvoteButtonTapped(sender: UIButton) {
@@ -54,19 +65,106 @@ class DisplayImageViewController: UIViewController {
         editMetaData()
         updateVoteLabels()
         
+        if let userId = FIRAuth.auth()?.currentUser?.uid {
+            let userReference = FIRDatabase.database().reference().child("users").child(userId)
+            
+            userReference.observe(.value, with: { (snapshot) in
+                
+                let username = snapshot.childSnapshot(forPath: "username").value as! String
+                self.sendVoters(voteType: "upvotes", username: username)
+                
+            })
+        }
+        
     }
+    
     
     internal func downvoteButtonTapped(sender: UIButton) {
         
         downvotes += 1
         editMetaData()
         updateVoteLabels()
+        
+        if let userId = FIRAuth.auth()?.currentUser?.uid {
+            let userReference = FIRDatabase.database().reference().child("users").child(userId)
+            
+            dump(userReference)
+            
+            userReference.observe(.value, with: { (snapshot) in
+                let username = snapshot.childSnapshot(forPath: "username").value as! String
+                
+                self.sendVoters(voteType: "downvotes", username: username)
+            })
+        }
+    }
+    
+    func getAllVoters() -> [String] {
+    
+        var voteString: [String] = []
+        
+        for name in getVoters(voteType: "upvotes") {
+            voteString.append("\(name) : upvoted")
+        }
+        for name in getVoters(voteType: "downvotes") {
+            voteString.append("\(name) : downvoted")
+        }
+       
+        return voteString
+    }
+    
+    func getVoters(voteType: String) -> [String] {
+        let databaseRef = FIRDatabase.database().reference()
+        let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitle)
+        var voters: [String] = []
+        ref.observe(.value, with: { (snapshot) in
+            if snapshot.childSnapshot(forPath: voteType).childrenCount > 0 {
+            
+                    voters = snapshot.childSnapshot(forPath: voteType).value! as! [String]
+
+            }
+            
+        })
+      
+        return voters
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return allVotings.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        
+        cell.textLabel?.text = allVotings[indexPath.row]
+        
+        return cell
+    }
+    
+    
+    func sendVoters(voteType: String, username: String) {
+        
+        let databaseRef = FIRDatabase.database().reference()
+        let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitle)
+        var voters: [String] = []
+        
+        ref.observe(.value, with: { (snapshot) in
+            if snapshot.childSnapshot(forPath: voteType).childrenCount > 0 {
+                voters = snapshot.childSnapshot(forPath: voteType).value! as! [String]
+            }
+            if !voters.contains(username) {
+                voters.append(username)
+            }
+            ref.updateChildValues([voteType:voters])
+        })
+        
     }
     
     func editMetaData() {
         
         let newMetadata = FIRStorageMetadata()
-//        newMetadata.cacheControl = "public,max-age=300"
+        //        newMetadata.cacheControl = "public,max-age=300"
         newMetadata.contentType = "image/jpeg"
         
         let dict = [
@@ -81,9 +179,9 @@ class DisplayImageViewController: UIViewController {
                 print("Error ----- \(error.localizedDescription)")
                 
             } else {
-
-              // dump(newMetadata.customMetadata!["downvotes"]!)
-               
+                
+                print("Successfully Updated Metadata")
+                
             }
         }
         
@@ -102,6 +200,9 @@ class DisplayImageViewController: UIViewController {
                 print("Upvotes  --------- \(upvotesMetadata!)")
                 self.upvotes = Int(upvotesMetadata!)!
                 self.downvotes = Int(downvotesMetadata!)!
+                
+                self.upvotesLabel.text = upvotesMetadata!
+                self.downvotesLabel.text = downvotesMetadata!
             }
         }
         
@@ -119,6 +220,12 @@ class DisplayImageViewController: UIViewController {
             view.leading.trailing.equalToSuperview()
             view.height.equalToSuperview().multipliedBy(0.5)
         }
+        
+        self.votersFeedTableView.snp.makeConstraints { (view) in
+            view.top.equalTo(imageContainerView.snp.bottom)
+            view.leading.trailing.bottom.equalToSuperview()
+        }
+        
         self.selectedImageView.snp.makeConstraints { (view) in
             view.top.leading.trailing.equalTo(imageContainerView)
             view.bottom.equalTo(imageContainerView.snp.bottom).inset(20.0)
