@@ -14,12 +14,16 @@ import FirebaseStorage
 //Global Variable to have access throughout the app
 let imageCache = NSCache<AnyObject, AnyObject>()
 
-class LoggedInViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class LoggedInViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource {
     var titleForCell = "YOUR PROFILE"
     let reuseIdentifier = "imagesCellIdentifier"
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
     let bottomCollectionViewNibName = "ImagesCollectionViewCell"
     var imagesCollectionView: UICollectionView!
+    var userTableView: UITableView = UITableView()
+    var userVotes: [String] = []
+
+
 
     var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("profileImageURL")
     var userUploadsReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
@@ -51,6 +55,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             view.height.equalTo(200.0)
         }
         
+        userTableView.snp.makeConstraints { (view) in
+            view.top.equalTo(profileImage.snp.bottom)
+            view.leading.trailing.equalToSuperview()
+            view.bottom.equalTo(imagesCollectionView.snp.top)
+        }
         
     }
     func setupViewHierarchy() {
@@ -60,6 +69,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         createBottomCollectionView()
         view.addSubview(imagesCollectionView)
         view.addSubview(profileImage)
+        view.addSubview(userTableView)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "LOG OUT", style: .plain, target: self, action: #selector(didTapLogout(sender:)))
     }
     
@@ -71,6 +81,13 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         catch {
             print(error)
+        }
+        
+        do {
+            FIRAuth.auth()?.signInAnonymously() { (user, error) in
+                _ = user!.isAnonymous  // true
+                _ = user!.uid
+            }
         }
     }
     
@@ -102,11 +119,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.userProfileImageReference.observe(.childAdded, with: { (snapshot) in
             let downloadURL = snapshot.value as! String
             dump("profile image url \(downloadURL)")
+            print(imageCache.object(forKey: downloadURL as AnyObject))
             //Check cache for profile image
-            if let cachedProfilePic = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
+            if let cachedProfilePic = imageCache.object(forKey: downloadURL as AnyObject) {
                 DispatchQueue.main.async {
-                    self.view.layoutSubviews()
-                    self.profileImage.image = cachedProfilePic
+                    self.profileImage.image = cachedProfilePic as? UIImage
                 }
                 return
             }
@@ -114,19 +131,18 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             //Download Image If Not Found In Cache. Insert into cache as well
             let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
             
-            storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
+            storageRef.data(withMaxSize: 10 * 2000 * 2000) { (data, error) -> Void in
                 
                 if let data = data {
                     let pic = UIImage(data: data)
                     imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
                     DispatchQueue.main.async {
-                        self.view.layoutSubviews()
                         self.profileImage.image = pic
                     }
                 }
             }
         })
-
+    print("Profile image size \(profileImage.image?.size)")
     }
     
     func downloadUserUploads() {
@@ -166,6 +182,23 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         })
         print(self.picArray.count)
     }
+    
+    //Table View Methods
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return userVotes.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        
+        cell.textLabel?.text = userVotes[indexPath.row]
+        
+        return cell
+    }
+
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImagesCollectionViewCell
