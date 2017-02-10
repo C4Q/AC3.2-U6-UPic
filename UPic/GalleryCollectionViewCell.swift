@@ -14,12 +14,11 @@ class GalleryCollectionViewCell: UICollectionViewCell {
     var textLabel: UILabel!
     
     override init(frame: CGRect) {
+        super.init(frame: frame)
         imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         textLabel = UILabel(frame:  CGRect(x: 0, y: imageView.frame.size.height / 2, width: frame.size.width, height: frame.size.height))
-
-        super.init(frame: frame)
         
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         contentView.addSubview(imageView)
         
         textLabel.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
