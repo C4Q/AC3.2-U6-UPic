@@ -169,26 +169,18 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as!
-        VotersFeedTableViewCell
-        
-        cell.imageView?.image = nil
-        cell.propicImage?.contentMode = .scaleToFill
-//        cell.propicImage.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-//        cell.propicImage?.layer.cornerRadius = 50
-        cell.textLabel?.text = allVotingsFeed[indexPath.row]
+        cell.feedLabel.text = allVotingsFeed[indexPath.row]
         let voterName = allVoters[indexPath.row]
         
         
         if profileIdToImage[allVoters[indexPath.row]] != nil {
-            
-            cell.imageView?.image = profileIdToImage[voterName]!
-            //cell.propicImage.image = profileIdToImage[voterName]!
+
+            cell.propicImage.image = profileIdToImage[voterName]!
         }
         else {
-            cell.imageView?.image = UIImage(named: "user_icon")
-            //cell.propicImage.image = profileIdToImage[voterName]!
+            cell.propicImage.image = UIImage(named: "user_icon")
         }
         
         return cell
