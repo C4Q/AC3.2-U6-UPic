@@ -23,6 +23,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     // MARK: - Properties
     let titleForCell: String = "UPLOAD"
+    var dynamicAnimator: UIDynamicAnimator?
+    
     var imagesCollectionView: UICollectionView!
     var topImagesCollectionView: UICollectionView!
     var catagories = ["WOOFS & MEOWS","NATURE", "ARCHITECTURE" ]
@@ -44,12 +46,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = titleForCell
         setupViewHierarchy()
         configureConstraints()
         
         getMoments()
         progressContainerView.isHidden = true
+        dynamicAnimator = UIDynamicAnimator(referenceView: view)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.titleTextField.text = ""
     }
     
     override func viewDidLayoutSubviews() {
@@ -59,33 +66,28 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setupViewHierarchy() {
+        self.navigationItem.title = titleForCell
         navigationController?.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
         navigationController?.navigationBar.barTintColor = ColorPalette.darkPrimaryColor
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "up_arrow"), style: .plain, target: self, action: #selector(didTapUpload))
+        navigationItem.rightBarButtonItem?.tintColor = ColorPalette.accentColor
         
         createBottomCollectionView()
         createTopCollectionView()
         self.view.addSubview(topContainerView)
         self.view.addSubview(imagesCollectionView)
         self.view.addSubview(topImagesCollectionView)
+        self.view.addSubview(progressContainerView)
 
         self.topContainerView.addSubview(titleTextField)
         self.topContainerView.addSubview(scrollView)
         
-        
-        navigationController?.navigationBar.backgroundColor = ColorPalette.darkPrimaryColor
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "up_arrow"), style: .plain, target: self, action: #selector(didTapUpload))
-        navigationItem.rightBarButtonItem?.tintColor = ColorPalette.accentColor
-        
-        categorySegmentedControl.addTarget(self, action: #selector(didSelectSegment(sender:)), for: .valueChanged)
-        categorySegmentedControl.setDividerImage(imageWithColor(color: ColorPalette.primaryColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-        
-        self.scrollView.addSubview(categorySegmentedControl)
-        
-        self.view.addSubview(progressContainerView)
         self.progressContainerView.addSubview(progressBar)
         self.progressContainerView.addSubview(progressLabel)
         
-        
+        categorySegmentedControl.addTarget(self, action: #selector(didSelectSegment(sender:)), for: .valueChanged)
+        categorySegmentedControl.setDividerImage(imageWithColor(color: ColorPalette.primaryColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+        self.scrollView.addSubview(categorySegmentedControl)
     }
     
     func configureConstraints() {
@@ -96,27 +98,32 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.top.equalToSuperview().offset(targetHeight!)
             view.height.equalTo(100.0)
         }
+        
         imagesCollectionView.snp.makeConstraints { (view) in
             view.bottom.leading.trailing.equalToSuperview()
             view.height.equalTo(175.0)
         }
+        
         topImagesCollectionView.snp.makeConstraints { (view) in
             view.top.equalTo(topContainerView.snp.bottom)
             view.leading.trailing.equalToSuperview()
             view.bottom.equalTo(imagesCollectionView.snp.top)
         }
+        
         titleTextField.snp.makeConstraints { (view) in
             view.top.equalTo(topContainerView.snp.top).offset(40.0)
             view.leading.equalTo(topContainerView.snp.leading).offset(15.0)
             view.trailing.equalTo(topContainerView.snp.trailing).inset(15.0)
             view.height.equalTo(20.0)
         }
+        
         scrollView.snp.makeConstraints { (view) in
             view.bottom.equalTo(topContainerView.snp.bottom).inset(8.0)
             view.trailing.leading.equalTo(topContainerView)
             view.height.equalTo(30.0)
             
         }
+        
         categorySegmentedControl.snp.makeConstraints { (view) in
             view.leading.equalTo(scrollView).offset(8.0)
             view.trailing.equalTo(scrollView).inset(8.0)
@@ -125,9 +132,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         progressContainerView.snp.makeConstraints { (view) in
-//            view.trailing.equalTo(self.view.snp.leading).inset(20.0)
-//            view.centerY.equalTo(topImagesCollectionView).inset(40.0)
-            view.center.equalToSuperview()
+            view.trailing.equalTo(self.view.snp.leading).inset(20.0)
+            view.centerY.equalTo(topImagesCollectionView).inset(40.0)
             view.height.equalTo(60.0)
             view.width.equalTo(200.0)
         }
@@ -224,9 +230,20 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let imageRef = storageRef.child("\(imageName).png")
             
             if let uploadData = UIImagePNGRepresentation(self.selectedImage!) {
-
+                
+                // Animating progress bar
                 progressContainerView.isHidden = false
-
+                self.progressContainerView.alpha = 1.0
+                
+                _ = self.dynamicAnimator?.behaviors.map {
+                    if $0 is UISnapBehavior {
+                        self.dynamicAnimator?.removeBehavior($0)
+                    }
+                }
+                let snap = UISnapBehavior(item: progressContainerView, snapTo: CGPoint(x: self.view.frame.midX, y: self.view.frame.midY))
+                dynamicAnimator?.addBehavior(snap)
+                
+                // Meta Data Task
                 let task = imageRef.put(uploadData, metadata: metaData, completion: { (metadata, error) in
                     
                     if error != nil {
@@ -244,12 +261,30 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     
                 })
                 
+                
                 let _ = task.observe(.progress) { (snapshot) in
                     
                     let progress = Float((snapshot.progress?.fractionCompleted)!)
                     if progress == 1.0 {
                         self.progressBar.isHidden = true
                         self.progressLabel.text = "SUCCESS!"
+                        
+                        UIView.animate(withDuration: 1.0, animations: {
+                            self.progressContainerView.alpha = 0.0
+                            }, completion: { finished in
+                                
+                                _ = self.dynamicAnimator?.behaviors.map {
+                                    if $0 is UISnapBehavior {
+                                        self.dynamicAnimator?.removeBehavior($0)
+                                    }
+                                }
+
+                                let snap = UISnapBehavior(item: self.progressContainerView, snapTo: CGPoint(x: self.view.frame.minX - 100.0, y: self.view.frame.midY - 100.0))
+                                snap.damping = 0.9
+                                self.dynamicAnimator?.addBehavior(snap)
+                                self.progressLabel.text = "UPLOADING..."
+                                self.progressBar.isHidden = false
+                        })
                     }
                     
                     self.progressBar.progress = progress
