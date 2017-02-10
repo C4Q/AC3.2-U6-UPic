@@ -66,8 +66,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             do {
                 FIRAuth.auth()?.signInAnonymously() { (user, error) in
-                    let isAnonymous = user!.isAnonymous  // true
-                    let uid = user!.uid
+                    _ = user!.isAnonymous  // true
+                    _ = user!.uid
                 }
             }
         }
