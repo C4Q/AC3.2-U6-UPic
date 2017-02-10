@@ -36,7 +36,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         setupViewHierarchy()
         configureConstraints()
         self.navigationItem.hidesBackButton = true
-        
         downloadProfileImage()
         downloadUserUploads()
         //imagesCollectionView.clearsSelectionOnViewWillAppear = false
@@ -122,11 +121,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     func downloadProfileImage() {
         //Fetch User Profile Image
         self.userProfileImageReference.observe(.childAdded, with: { (snapshot) in
-           
+
             if snapshot.key == "profileImageURL" {
                 let downloadURL = snapshot.value as! String
 
-            
             //Check cache for profile image
             if let cachedProfilePic = imageCache.object(forKey: downloadURL as AnyObject) {
                 DispatchQueue.main.async {
@@ -140,7 +138,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             storageRef.data(withMaxSize: 1 * 2000 * 2000) { (data, error) -> Void in
                 if error != nil {
-                    print(error)
+                    print(error?.localizedDescription)
                     return
                 }
                 if let data = data {
@@ -161,8 +159,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.userUploadsReference.observe(.childAdded, with: { (snapshot) in
             // Get download URL from snapshot
             let downloadURL = snapshot.value as! String
-            dump("This is download URL \(downloadURL)")
-            
+       
             //Check cache for images
             if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
                 self.picArray.append(cachedImage)

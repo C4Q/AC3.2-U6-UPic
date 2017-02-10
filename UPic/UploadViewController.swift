@@ -288,7 +288,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     }
                     
                     self.progressBar.progress = progress
-                    dump(snapshot.progress)
                 }
             }
         }

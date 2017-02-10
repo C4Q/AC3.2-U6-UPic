@@ -99,7 +99,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                     DispatchQueue.main.async {
                         self.colView.reloadData()
                     }
-                    
                     return
                 }
                 
@@ -121,7 +120,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             }
             
         })
-       // dump(imageTitleArr)
     }
     
     // MARK: UICollectionViewDataSource
