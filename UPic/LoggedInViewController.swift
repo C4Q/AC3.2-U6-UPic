@@ -32,12 +32,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         setupViewHierarchy()
         configureConstraints()
         self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem = editButtonItem
         self.navigationItem.rightBarButtonItem?.title = "LOG OUT"
         dump(self.userReference)
         dump(FIRStorage.storage().reference())
         downloadImages()
-        //imagesCollectionView.clearsSelectionOnViewWillAppear = false
     }
     
     
@@ -109,6 +107,9 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             //Check cache for images
             if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
                 self.picArray.append(cachedImage)
+                DispatchQueue.main.async {
+                    self.imagesCollectionView.reloadData()
+                }
                 return
             }
             
