@@ -69,57 +69,54 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         let userRef = FIRDatabase.database().reference().child("users")
         var idToName: (id: String,name: String) = ("","")
         
-        
         userRef.observe(.childAdded, with: { (snapshot) in
             
-            if snapshot.childrenCount > 0 {
-                if snapshot.childSnapshot(forPath: "username").value as! String == username {
+            if snapshot.childSnapshot(forPath: "username").value as! String == username {
+                
+                idToName.id = snapshot.key
+                idToName.name = snapshot.childSnapshot(forPath: "username").value as! String
+                
+                userRef.child(idToName.id).observe(.value, with: { (snapshot) in
                     
-                    idToName.id = snapshot.key
-                    idToName.name = snapshot.childSnapshot(forPath: "username").value as! String
-                    
-                    userRef.child(idToName.id).observe(.value, with: { (snapshot) in
+                    if let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as? String {
                         
-                        if let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as? String {
+                        if let cachedProfilePic = imageCache.object(forKey: profileImageURL as AnyObject) as? UIImage {
+                            DispatchQueue.main.async {
+                                self.view.layoutSubviews()
+                                self.profileIdToImage[idToName.name] = cachedProfilePic
+                                //dump(cachedProfilePic)
+                                // dump(self.profileIdToImage)
+                                DispatchQueue.main.async {
+                                    self.votersFeedTableView.reloadData()
+                                }
+                            }
                             
-                            if let cachedProfilePic = imageCache.object(forKey: profileImageURL as AnyObject) as? UIImage {
+                            return
+                        }
+                        
+                        // Download Image If Not Found In Cache. Insert into cache as well
+                        let storageRef = FIRStorage.storage().reference(forURL: profileImageURL)
+                        
+                        storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
+                            
+                            if let data = data {
+                                let pic = UIImage(data: data)
+                                imageCache.setObject(pic!, forKey: profileImageURL as AnyObject)
                                 DispatchQueue.main.async {
                                     self.view.layoutSubviews()
-                                    self.profileIdToImage[idToName.name] = cachedProfilePic
-                                    //dump(cachedProfilePic)
-                                    // dump(self.profileIdToImage)
+                                    self.profileIdToImage[idToName.name] = pic
+                                    // dump(pic)
+                                    //dump(self.profileIdToImage)
                                     DispatchQueue.main.async {
                                         self.votersFeedTableView.reloadData()
                                     }
                                 }
-                                
-                                return
-                            }
-                            
-                            // Download Image If Not Found In Cache. Insert into cache as well
-                            let storageRef = FIRStorage.storage().reference(forURL: profileImageURL)
-                            
-                            storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
-                                
-                                if let data = data {
-                                    let pic = UIImage(data: data)
-                                    imageCache.setObject(pic!, forKey: profileImageURL as AnyObject)
-                                    DispatchQueue.main.async {
-                                        self.view.layoutSubviews()
-                                        self.profileIdToImage[idToName.name] = pic
-                                        // dump(pic)
-                                        //dump(self.profileIdToImage)
-                                        DispatchQueue.main.async {
-                                            self.votersFeedTableView.reloadData()
-                                        }
-                                    }
-                                }
                             }
                         }
-                    })
-                }
-            })
-        }
+                    }
+                })
+            }
+        })
     }
     
     
@@ -197,6 +194,9 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         
         if let userId = FIRAuth.auth()?.currentUser?.uid {
             
+            editMetaData()
+            
+            
             let userReference = FIRDatabase.database().reference().child("users").child(userId)
             
             userReference.observe(.value, with: { (snapshot) in
@@ -205,10 +205,13 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                     self.sendVoters(voteType: "upvotes", username: username)
                 }
                 
+                
             })
             
             FIRDatabase.database().reference().child("users").child(userId).child("upvotes").updateChildValues(["upvote" : self.imageTitle])
         }
+        
+        
         
     }
     
@@ -232,6 +235,28 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             FIRDatabase.database().reference().child("users").child(userId).child("downvotes").updateChildValues(["downvote" : self.imageTitle])
             
         }
+        
+        //if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+        downvotes += 1
+        editMetaData()
+        updateVoteLabels()
+        
+        if let userId = FIRAuth.auth()?.currentUser?.uid {
+            
+            let userReference = FIRDatabase.database().reference().child("users").child(userId)
+            
+            userReference.observe(.value, with: { (snapshot) in
+                if let username = snapshot.childSnapshot(forPath: "username").value as? String {
+                    
+                    self.sendVoters(voteType: "downvotes", username: username)
+                }
+            })
+            
+            FIRDatabase.database().reference().child("users").child(userId).child("downvotes").updateChildValues(["downvote" : self.imageTitle])
+            
+        }
+        //}
+        
     }
     
     func sendVoters(voteType: String, username: String) {
