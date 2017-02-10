@@ -85,17 +85,18 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             self.imageTitleArr.append(snapshot.key)
             
             if snapshot.childrenCount != 0 {
-                let downloadURL = snapshot.childSnapshot(forPath: "url").value
+                let downloadURL = snapshot.childSnapshot(forPath: "url").value as! String
                 
-                self.imageURLs.append(URL(string: downloadURL as! String )!)
-                let storageRef = FIRStorage.storage().reference(forURL: downloadURL as! String )
+                self.imageURLs.append(URL(string: downloadURL)!)
+                let storageRef = FIRStorage.storage().reference(forURL: downloadURL)
                 self.refArr.append(storageRef)
                 //Check Cache for Image
                 if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
                     
                     self.imagesToLoad.append(cachedImage)
-                    self.imageURLs.append(URL(string: downloadURL as! String )!)
-                    
+
+                    self.imageURLs.append(URL(string: downloadURL)!)
+
                     DispatchQueue.main.async {
                         self.colView.reloadData()
                     }
@@ -104,7 +105,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                 }
                 
                 // Download the data, assuming a max size of 1MB (you can change this as necessary)
-                storageRef.data(withMaxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
                     // Create a UIImage, add it to the array
                     if let data = data {
                         let pic = UIImage(data: data)
