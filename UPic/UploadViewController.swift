@@ -234,7 +234,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     databaseRef.child("users").child((user?.uid)!).child("uploads").updateChildValues([self.titleTextField.text! : String(describing: metadata!.downloadURL()!)])
                     
                     
-                    databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).child("image").updateChildValues(dict)
+                    databaseRef.child("categories").child(self.catogorySegmentedControl.titleForSegment(at: self.catogorySegmentedControl.selectedSegmentIndex)!).child(self.titleTextField.text!).updateChildValues(dict)
                     
                     print((String(describing: metadata!.downloadURL()!)))
                     
