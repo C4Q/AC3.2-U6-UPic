@@ -14,9 +14,10 @@ import FirebaseStorage
 //Global Variable to have access throughout the app
 let imageCache = NSCache<AnyObject, AnyObject>()
 
-class LoggedInViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource {
+class LoggedInViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: - Properties
+    let reuseIdentifierTableView = "votersFeedCell"
     var titleForCell = "YOUR PROFILE"
     let reuseIdentifier = "imagesCellIdentifier"
     let bottomCollectionViewItemSize = CGSize(width: 125, height: 175)
@@ -24,6 +25,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     var imagesCollectionView: UICollectionView!
     var userTableView: UITableView = UITableView()
     var userVotes: [String] = []
+    var user = FIRAuth.auth()?.currentUser?.uid
 
     var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
     var userUploadsReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
@@ -38,7 +40,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.navigationItem.hidesBackButton = true
         downloadProfileImage()
         downloadUserUploads()
+        populateUserVoteArray()
+      
+
         //imagesCollectionView.clearsSelectionOnViewWillAppear = false
+
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -52,9 +58,14 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         view.addSubview(imagesCollectionView)
         view.addSubview(profileImage)
         view.addSubview(userTableView)
-        
+        userTableView.delegate = self
+        userTableView.dataSource = self
+        userTableView.register(VotersFeedTableViewCell.self, forCellReuseIdentifier: reuseIdentifierTableView)
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "LOG OUT", style: .plain, target: self, action: #selector(didTapLogout(sender:)))
         navigationItem.rightBarButtonItem?.tintColor = ColorPalette.accentColor
+        profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickProfileImage)))
+
     }
     
     func configureConstraints() {
@@ -188,6 +199,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     //Table View Methods
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return userVotes.count
@@ -201,6 +216,21 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         return cell
     }
+    
+    func populateUserVoteArray () {
+        let userReference = FIRDatabase.database().reference().child("users").child(user!).child("upvotes")
+        
+        userReference.observe(.childAdded, with: { (snapshot) in
+            
+           
+            if snapshot.key == "upvote" {
+                self.userVotes.append(snapshot.value as! String)
+            }
+        })
+        DispatchQueue.main.async {
+            self.userTableView.reloadData()
+        }
+    }
 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -213,6 +243,40 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         return cell
     }
     
+    // Handler Function for picking profile pic
+    func pickProfileImage() {
+        let picker = UIImagePickerController()
+        present(picker, animated: true, completion: nil)
+        picker.delegate = self
+    }
+    
+    // MARK: - Image Picker Delegate Method
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let imageName = NSUUID().uuidString
+        let storageRef = FIRStorage.storage().reference().child("\(imageName).png")
+        
+        if let uploadData = UIImagePNGRepresentation(info["UIImagePickerControllerOriginalImage"] as! UIImage) {
+            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                
+                if error != nil {
+                    print(error)
+                    return
+                }
+                if let metadataURL = metadata?.downloadURL()?.absoluteString {
+                    let values = [
+                        "profileImageURL" : metadataURL
+                    ]
+                 FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).updateChildValues(values)
+                }
+            })
+        }
+        
+
+        self.profileImage.image = info["UIImagePickerControllerOriginalImage"] as! UIImage?
+        dismiss(animated: true, completion: nil)
+    }
+
+    
     
     // MARK: - Lazy Instantiates
     
@@ -220,9 +284,10 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     lazy var profileImage: UIImageView = {
         let profilePic = UIImageView()
         profilePic.contentMode = .scaleAspectFit
-        //profilePic.image = #imageLiteral(resourceName: "user_icon")
+        profilePic.image = #imageLiteral(resourceName: "user_icon")
         profilePic.layer.cornerRadius = 100.0
         profilePic.layer.masksToBounds = true
+        profilePic.isUserInteractionEnabled = true
         return profilePic
     }()
     

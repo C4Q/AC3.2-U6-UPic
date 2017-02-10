@@ -170,7 +170,8 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as!
+        VotersFeedTableViewCell
         
         cell.imageView?.image = nil
         cell.propicImage?.contentMode = .scaleToFill
@@ -210,6 +211,8 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
             })
+            
+            FIRDatabase.database().reference().child("users").child(userId).child("upvotes").updateChildValues(["upvote" : self.imageTitle])
         }
         
     }
@@ -230,6 +233,9 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                     self.sendVoters(voteType: "downvotes", username: username)
                 }
             })
+            
+            FIRDatabase.database().reference().child("users").child(userId).child("downvotes").updateChildValues(["downvote" : self.imageTitle])
+            
         }
     }
     
