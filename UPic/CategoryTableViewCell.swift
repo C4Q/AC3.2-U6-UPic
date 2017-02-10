@@ -34,7 +34,7 @@ class CategoryTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         // Customize overlay
-        newImage.contentMode = .scaleAspectFit
+        newImage.contentMode = .scaleAspectFill
         
         newOverlay.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
         
