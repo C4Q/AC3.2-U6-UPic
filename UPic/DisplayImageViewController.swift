@@ -65,7 +65,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         self.view.addSubview(votersFeedTableView)
         votersFeedTableView.register(VotersFeedTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
     }
-
+    
     func downloadProfileImage(username: String) {
         let userRef = FIRDatabase.database().reference().child("users")
         var idToName: (id: String,name: String) = ("","")
@@ -177,7 +177,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         
         
         if profileIdToImage[allVoters[indexPath.row]] != nil {
-
+            
             cell.propicImage.image = profileIdToImage[voterName]!
         }
         else {
@@ -188,47 +188,52 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     internal func upvoteButtonTapped(sender: UIButton) {
-        
-        upvotes += 1
-        editMetaData()
-        updateVoteLabels()
-        
-        if let userId = FIRAuth.auth()?.currentUser?.uid {
+        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+            upvotes += 1
             
-            let userReference = FIRDatabase.database().reference().child("users").child(userId)
             
-            userReference.observe(.value, with: { (snapshot) in
+            editMetaData()
+            
+            updateVoteLabels()
+            
+            if let userId = FIRAuth.auth()?.currentUser?.uid {
                 
-                if let username = snapshot.childSnapshot(forPath: "username").value as? String {
-                    self.sendVoters(voteType: "upvotes", username: username)
-                }
+                let userReference = FIRDatabase.database().reference().child("users").child(userId)
                 
-            })
-            
-            FIRDatabase.database().reference().child("users").child(userId).child("upvotes").updateChildValues(["upvote" : self.imageTitle])
+                userReference.observe(.value, with: { (snapshot) in
+                    
+                    if let username = snapshot.childSnapshot(forPath: "username").value as? String {
+                        self.sendVoters(voteType: "upvotes", username: username)
+                    }
+                    
+                })
+                
+                FIRDatabase.database().reference().child("users").child(userId).child("upvotes").updateChildValues(["upvote" : self.imageTitle])
+            }
         }
-        
     }
     
     internal func downvoteButtonTapped(sender: UIButton) {
         
-        downvotes += 1
-        editMetaData()
-        updateVoteLabels()
-        
-        if let userId = FIRAuth.auth()?.currentUser?.uid {
+        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+            downvotes += 1
+            editMetaData()
+            updateVoteLabels()
             
-            let userReference = FIRDatabase.database().reference().child("users").child(userId)
-            
-            userReference.observe(.value, with: { (snapshot) in
-                if let username = snapshot.childSnapshot(forPath: "username").value as? String {
-                    
-                    self.sendVoters(voteType: "downvotes", username: username)
-                }
-            })
-            
-            FIRDatabase.database().reference().child("users").child(userId).child("downvotes").updateChildValues(["downvote" : self.imageTitle])
-            
+            if let userId = FIRAuth.auth()?.currentUser?.uid {
+                
+                let userReference = FIRDatabase.database().reference().child("users").child(userId)
+                
+                userReference.observe(.value, with: { (snapshot) in
+                    if let username = snapshot.childSnapshot(forPath: "username").value as? String {
+                        
+                        self.sendVoters(voteType: "downvotes", username: username)
+                    }
+                })
+                
+                FIRDatabase.database().reference().child("users").child(userId).child("downvotes").updateChildValues(["downvote" : self.imageTitle])
+                
+            }
         }
     }
     
