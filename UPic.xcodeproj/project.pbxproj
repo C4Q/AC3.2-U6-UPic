@@ -117,7 +117,6 @@
 				9B0DBF4E1E4E3D7200EFDEB7 /* GoogleService-Info.plist */,
 				47E4E5231E48E6F700C5FDBF /* LaunchScreen.storyboard */,
 				47E4E5261E48E6F700C5FDBF /* Info.plist */,
-
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
