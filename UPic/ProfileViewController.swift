@@ -197,9 +197,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         if let password = self.passwordTextField.text, let email = self.usernameTextField.text {
             FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if user != nil {
-                    print(user?.displayName)
-                    print("From logging in \(FIRAuth.auth()?.currentUser?.displayName)")
-                    print("From logging in \(FIRAuth.auth()?.currentUser?.uid)")
                     self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
                 }
                 else {
