@@ -266,7 +266,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
-                    print(error?.localizedDescription)
+                    print(error!.localizedDescription)
                     return
                 }
                 if let metadataURL = metadata?.downloadURL()?.absoluteString {
