@@ -13,8 +13,6 @@
 		3EF2F3E11E4B6E9B00F0AF81 /* TopCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3EF2F3DF1E4B6E9B00F0AF81 /* TopCollectionViewCell.xib */; };
 		4539F1BEBFE6560F2A1C3959 /* Pods_UPic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE930EC10FFB37EBCC6B7EEC /* Pods_UPic.framework */; };
 		47E4E51B1E48E6F700C5FDBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E51A1E48E6F700C5FDBF /* AppDelegate.swift */; };
-		47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E5211E48E6F700C5FDBF /* Assets.xcassets */; };
-		47E4E5251E48E6F700C5FDBF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E5231E48E6F700C5FDBF /* LaunchScreen.storyboard */; };
 		47E4E52F1E48E83C00C5FDBF /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E52E1E48E83C00C5FDBF /* CategoryViewController.swift */; };
 		47E4E5311E48E86900C5FDBF /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5301E48E86900C5FDBF /* UploadViewController.swift */; };
 		47E4E5331E48E88100C5FDBF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5321E48E88100C5FDBF /* ProfileViewController.swift */; };
@@ -24,6 +22,8 @@
 		47E4E5481E4A63F500C5FDBF /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5471E4A63F500C5FDBF /* GalleryCollectionViewCell.swift */; };
 		47E4E54B1E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4E5491E4A6EB900C5FDBF /* ImagesCollectionViewCell.swift */; };
 		47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E54A1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib */; };
+		9B0C4EA51E4FC4C100BD2AFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E5231E48E6F700C5FDBF /* LaunchScreen.storyboard */; };
+		9B0C4EA61E4FC4C100BD2AFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47E4E5211E48E6F700C5FDBF /* Assets.xcassets */; };
 		9B0DBF531E4E760D00EFDEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B0DBF521E4E760D00EFDEB7 /* GoogleService-Info.plist */; };
 		9B0ED0241E4C1A53008868B5 /* DisplayImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0ED0231E4C1A53008868B5 /* DisplayImageViewController.swift */; };
 		9B138E011E4D956B00F60338 /* VotersFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B138E001E4D956B00F60338 /* VotersFeedTableViewCell.swift */; };
@@ -241,10 +241,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47E4E5251E48E6F700C5FDBF /* LaunchScreen.storyboard in Resources */,
-				47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */,
-				47E4E5251E48E6F700C5FDBF /* LaunchScreen.storyboard in Resources */,
-				47E4E5221E48E6F700C5FDBF /* Assets.xcassets in Resources */,
+				9B0C4EA51E4FC4C100BD2AFA /* LaunchScreen.storyboard in Resources */,
+				9B0C4EA61E4FC4C100BD2AFA /* Assets.xcassets in Resources */,
 				9B0DBF531E4E760D00EFDEB7 /* GoogleService-Info.plist in Resources */,
 				47E4E54C1E4A6EB900C5FDBF /* ImagesCollectionViewCell.xib in Resources */,
 				3EF2F3E11E4B6E9B00F0AF81 /* TopCollectionViewCell.xib in Resources */,
