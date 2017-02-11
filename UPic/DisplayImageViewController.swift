@@ -27,6 +27,8 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     var allVoters: [String] = []
     var profileIdToName: [String:String] = [:]
     var profileIdToImage: [String:UIImage] = [:]
+    var currentUserName: String?
+    var currentUserId: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,13 +40,13 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         selectedImageView.image = image
         selectedImageView.setNeedsLayout()
         getVoters()
-        
-        
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(false)
         getMetadata()
+        
     }
     
     func setupViewHierarchy() {
@@ -69,12 +71,17 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         let userRef = FIRDatabase.database().reference().child("users")
         var idToName: (id: String,name: String) = ("","")
         
+        
         userRef.observe(.childAdded, with: { (snapshot) in
             
-            if snapshot.childSnapshot(forPath: "username").value as! String == username {
-                
+            guard let user = snapshot.childSnapshot(forPath: "username").value as? String else {
+                return
+            }
+
+            if user == username {
+      
                 idToName.id = snapshot.key
-                idToName.name = snapshot.childSnapshot(forPath: "username").value as! String
+                idToName.name = user
                 
                 userRef.child(idToName.id).observe(.value, with: { (snapshot) in
                     
@@ -84,8 +91,6 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                             DispatchQueue.main.async {
                                 self.view.layoutSubviews()
                                 self.profileIdToImage[idToName.name] = cachedProfilePic
-                                //dump(cachedProfilePic)
-                                // dump(self.profileIdToImage)
                                 DispatchQueue.main.async {
                                     self.votersFeedTableView.reloadData()
                                 }
@@ -105,8 +110,6 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                                 DispatchQueue.main.async {
                                     self.view.layoutSubviews()
                                     self.profileIdToImage[idToName.name] = pic
-                                    // dump(pic)
-                                    //dump(self.profileIdToImage)
                                     DispatchQueue.main.async {
                                         self.votersFeedTableView.reloadData()
                                     }
@@ -124,15 +127,16 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         let databaseRef = FIRDatabase.database().reference()
         let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitle)
         
-        var votingFeed: [String] = []
-        var upvoters: [String] = []
-        var downvoters: [String] = []
-        
         ref.observe(.value, with: { (snapshot) in
+            
+            var votingFeed: [String] = []
+            var upvoters: [String] = []
+            var downvoters: [String] = []
+            var localAllVoters: [String] = []
             
             if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
                 upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
-                
+
             }
             
             if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
@@ -140,23 +144,25 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             for name in upvoters {
-                if name != "" {
+                if name != ""  {
+                    localAllVoters.append(name)
                     votingFeed.append("\(name) voted up.")
-                    self.allVoters.append(name)
                     self.downloadProfileImage(username: name)
                 }
             }
             
             for name in downvoters {
-                if name != "" {
-                    self.allVoters.append(name)
+                if name != ""  {
+                    localAllVoters.append(name)
                     votingFeed.append("\(name) voted down.")
                     self.downloadProfileImage(username: name)
                 }
             }
             
+            self.allVoters = localAllVoters
             self.allVotingsFeed = votingFeed
             DispatchQueue.main.async {
+           
                 self.votersFeedTableView.reloadData()
             }
         })
@@ -170,6 +176,9 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        
+        cell.propicImage.image = nil
+        cell.textLabel?.text = nil
         
         cell.feedLabel.text = allVotingsFeed[indexPath.row]
         let voterName = allVoters[indexPath.row]
@@ -187,12 +196,11 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     internal func upvoteButtonTapped(sender: UIButton) {
-        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+        
+        if FIRAuth.auth()?.currentUser?.isAnonymous == false && allVoters.contains(currentUserName!) == false {
+            
             upvotes += 1
-            
-            
             editMetaData()
-            
             updateVoteLabels()
             
             if let userId = FIRAuth.auth()?.currentUser?.uid {
@@ -214,7 +222,8 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     
     internal func downvoteButtonTapped(sender: UIButton) {
         
-        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+        if FIRAuth.auth()?.currentUser?.isAnonymous == false && allVoters.contains(currentUserName!) == false {
+            
             downvotes += 1
             editMetaData()
             updateVoteLabels()
@@ -273,11 +282,12 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             } else {
                 
                 print("Successfully Updated Metadata")
-                
+          
             }
         }
         
         self.votersFeedTableView.reloadData()
+      
     }
     
     func getMetadata() {

@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>1081415984817-0or1vv8nqspu3h8unnmh8hhu9lnm401s.apps.googleusercontent.com</string>
+	<string>1046193280661-hme6mcbpbomu04bbo2biq1kqdett00rg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1081415984817-0or1vv8nqspu3h8unnmh8hhu9lnm401s</string>
+	<string>com.googleusercontent.apps.1046193280661-hme6mcbpbomu04bbo2biq1kqdett00rg</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDj0IV9A7sn2DVSY8ZS2FC1oMtYXzGo72k</string>
+	<string>AIzaSyAbA10dO7qudhzevCooa3I3s4bss7s3iRs</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1081415984817</string>
+	<string>1046193280661</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>Ericchang.UPic</string>
 	<key>PROJECT_ID</key>
-	<string>upic-a2216</string>
+	<string>upic-test-5cd49</string>
 	<key>STORAGE_BUCKET</key>
-	<string>upic-a2216.appspot.com</string>
+	<string>upic-test-5cd49.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true/>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1081415984817:ios:b0e3fa6ab5beee02</string>
+	<string>1:1046193280661:ios:b0e3fa6ab5beee02</string>
 	<key>DATABASE_URL</key>
-	<string>https://upic-a2216.firebaseio.com</string>
+	<string>https://upic-test-5cd49.firebaseio.com</string>
 </dict>
 </plist>
