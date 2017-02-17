@@ -14,10 +14,10 @@ import FirebaseDatabase
 class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // MARK: - Properties
-    var propertyAnimator: UIViewPropertyAnimator?
     var titleForCell = "LOGIN/REGISTER"
     var activeField: UITextField?
     var ref: FIRDatabaseReference!
+    var propertyAnimator: UIViewPropertyAnimator?
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -26,30 +26,34 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         setupViewHierarchy()
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+
+        _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.isHidden = true }
+        _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.alpha = 0.3 }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.propertyAnimator = UIViewPropertyAnimator(duration: 1.0, dampingRatio: 0.75, animations: nil)
+        self.propertyAnimator = UIViewPropertyAnimator(duration: 1.8, dampingRatio: 0.75, animations: nil)
         
         configureConstraints()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
+        _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.isHidden = false }
+
         self.animateLogo()
         
-        self.addSlidingAnimationToUsername()
-        self.addSlidingAnimationToPassword()
-        self.startSlidingAnimations()
+        self.addPropertyAnimations()
+        self.startAnimations()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        usernameTextField.underlined()
-        passwordTextField.underlined()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        usernameTextField.text = ""
+        passwordTextField.text = ""
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -86,14 +90,14 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.view.snp.top)
+            make.top.equalTo(self.UPicLogo.snp.bottom).offset(24.0)
         }
         
         passwordContainerView.snp.makeConstraints { (make) in
-            make.width.equalTo(usernameContainerView.snp.width)
-            make.height.equalTo(usernameContainerView.snp.height)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.view.snp.top)
+            make.width.equalTo(self.usernameContainerView.snp.width)
+            make.height.equalTo(self.usernameContainerView.snp.height)
+            make.top.equalTo(self.usernameContainerView.snp.bottom).offset(16.0)
+            make.trailing.equalTo(self.usernameContainerView.snp.trailing)
         }
         
         // Textfields
@@ -123,86 +127,46 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     // MARK: - Property Animations
-    internal func addSlidingAnimationToUsername() {
+    internal func addPropertyAnimations() {
         
         propertyAnimator?.addAnimations ({
-            self.usernameContainerView.snp.remakeConstraints { (make) in
-                make.width.equalToSuperview().multipliedBy(0.8)
-                make.height.equalTo(44.0)
-                make.centerX.equalToSuperview()
-                make.top.equalTo(self.UPicLogo.snp.bottom).offset(24.0)
-            }
-            
-            self.view.layoutIfNeeded()
-            }, delayFactor: 0.0)
-    }
-    
-    internal func addSlidingAnimationToPassword() {
-        
-        propertyAnimator?.addAnimations ({
-            self.passwordContainerView.snp.remakeConstraints { (make) in
-                make.width.equalTo(self.usernameContainerView.snp.width)
-                make.height.equalTo(self.usernameContainerView.snp.height)
-                make.top.equalTo(self.usernameContainerView.snp.bottom).offset(16.0)
-                make.trailing.equalTo(self.usernameContainerView.snp.trailing)
-            }
-            
-            self.view.layoutIfNeeded()
-            }, delayFactor: 0.1)
+            self.usernameContainerView.alpha = 1.0
+            self.passwordContainerView.alpha = 1.0
+            self.loginButton.alpha = 1.0
+            self.registerButton.alpha = 1.0
+        }, delayFactor: 0.3)
+        self.view.layoutIfNeeded()
     }
     
     internal func animateLogo() {
-//        
-//        UIView.animate(withDuration: 1.0, animations: {
-//            
-//            self.UPicLogo.snp.remakeConstraints({ (make) in
-//                make.size.equalTo(CGSize(width: 25.0, height: 25.0))
-//                make.centerX.equalToSuperview()
-//                make.top.equalToSuperview().offset(40.0)
-//            })
-//        })
-//        
-        
-
-        
-        UIView.animate(withDuration: 0.3, delay: 0.0, options: .autoreverse, animations: {
-        
+    
+        UIView.animate(withDuration: 0.25, delay: 0.2, options: .autoreverse, animations: {
+            
             let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
             let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
             let combined = scale.concatenating(rotation)
             self.UPicLogo.transform = combined
             }, completion: { finished in
                 self.UPicLogo.transform = CGAffineTransform.identity
-            }
-        )
-
-        UIView.animate(withDuration: 0.15, delay: 0.15, animations: {
-            self.view.backgroundColor = .white
-        }, completion: {
-            finished in
-            self.view.backgroundColor = ColorPalette.primaryColor
-        })
+            })
         
-//        let logoAnimator = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut) {
-//            self.UPicLogo.transform = CGAffineTransform.identity
-//        }
-//        
-//        logoAnimator.addAnimations({
-//            self.UPicLogo.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-//            }, delayFactor: 1.3)
-//        
-//        logoAnimator.addAnimations({
-//            self.UPicLogo.transform = CGAffineTransform.identity
-//            }, delayFactor: 2.7)
-//        
-//        
-//        logoAnimator.startAnimation()
+        UIView.animate(withDuration: 0.15, delay: 0.2, animations: {
+            self.view.backgroundColor = .white
+            }, completion: {
+                finished in
+                self.view.backgroundColor = ColorPalette.primaryColor
+        })
         
         self.view.layoutIfNeeded()
     }
     
-    internal func startSlidingAnimations() {
+    internal func startAnimations() {
+        self.view.layoutIfNeeded()
         propertyAnimator?.startAnimation()
+        usernameTextField.styled(placeholder: "username")
+        passwordTextField.styled(placeholder: "password")
+        loginButton.styled(title: "login")
+        registerButton.styled(title: "register")
     }
     
     //MARK: - UITextFieldDelegate
@@ -233,9 +197,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         if let password = self.passwordTextField.text, let email = self.usernameTextField.text {
             FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if user != nil {
-                    print(user?.displayName)
-                    print("From logging in \(FIRAuth.auth()?.currentUser?.displayName)")
-                    print("From logging in \(FIRAuth.auth()?.currentUser?.uid)")
                     self.navigationController?.pushViewController(LoggedInViewController(), animated: true)
                 }
                 else {
@@ -265,21 +226,11 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // Textfields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
-        textField.attributedPlaceholder = NSAttributedString(string: "USERNAME",
-                                                             attributes: [NSForegroundColorAttributeName: ColorPalette.accentColor])
-        
-        textField.textColor = ColorPalette.accentColor
-        textField.tintColor = ColorPalette.accentColor
         return textField
     }()
     
     internal lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.attributedPlaceholder = NSAttributedString(string: "PASSWORD",
-                                                             attributes: [NSForegroundColorAttributeName: ColorPalette.accentColor])
-        
-        textField.textColor = ColorPalette.accentColor
-        textField.tintColor = ColorPalette.accentColor
         textField.isSecureTextEntry = true
         return textField
     }()
@@ -298,25 +249,11 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     // Buttons
     internal lazy var loginButton: UIButton = {
         let button: UIButton = UIButton()
-        button.setTitle("LOGIN", for: .normal)
-        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
-        button.backgroundColor = ColorPalette.primaryColor
-        
-        button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 1.0
         return button
     }()
     
     internal lazy var registerButton: UIButton = {
         let button: UIButton = UIButton()
-        button.setTitle("REGISTER", for: .normal)
-        button.setTitleColor(ColorPalette.textIconColor, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
-        button.backgroundColor = ColorPalette.primaryColor
-        
-        button.layer.borderColor = ColorPalette.textIconColor.cgColor
-        button.layer.borderWidth = 1.0
         return button
     }()
 }
