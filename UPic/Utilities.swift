@@ -63,7 +63,6 @@ extension UITextField {
 }
 
 // Button Style
-
 extension UIButton {
     
     func styled(title: String) {

@@ -13,11 +13,6 @@ import FirebaseStorage
 
 class CategoryViewController: UITableViewController, CellTitled {
     
-//    // Gallery View Controllers
-//    private let woofMeowViewControllers: [CellTitled] = [WoofMeowViewController()]
-//    private let natureViewControllers: [CellTitled] = [NatureViewController()]
-//    private let architectureViewControllers: [CellTitled] = [ArchitectureViewController()]
-    
     // MARK: - Properties
     let titleForCell = "CATEGORIES"
     let cellIdentifier: String = "CategoryCellIdentifier"
@@ -53,14 +48,6 @@ class CategoryViewController: UITableViewController, CellTitled {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        switch section {
-//        case 0:
-//            return woofMeowViewControllers.count
-//        case 1:
-//            return natureViewControllers.count
-//        default:
-//            return architectureViewControllers.count
-//        }
         return 1
     }
     
@@ -85,17 +72,6 @@ class CategoryViewController: UITableViewController, CellTitled {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        switch (indexPath.section, indexPath.row) {
-//        case (0, let row):
-//            let wmvc = woofMeowViewControllers[row] as! UIViewController
-//            navigationController?.pushViewController(wmvc, animated: true)
-//        case (1, 0):
-//            let nvc = natureViewControllers[0] as! UIViewController
-//            navigationController?.pushViewController(nvc, animated: true)
-//        default:
-//            let avc = architectureViewControllers[0] as! UIViewController
-//            navigationController?.pushViewController(avc, animated: true)
-//        }
         let galleryVC = GalleryCollectionViewController()
         galleryVC.titleForCell = GallerySections.sections[indexPath.section]
         galleryVC.category = GallerySections(rawValue: GallerySections.sections[indexPath.section])
@@ -103,8 +79,6 @@ class CategoryViewController: UITableViewController, CellTitled {
         let backItem = UIBarButtonItem()
         backItem.title = ""
         navigationItem.backBarButtonItem = backItem
-    }
-    
-        
+    }       
 }
 

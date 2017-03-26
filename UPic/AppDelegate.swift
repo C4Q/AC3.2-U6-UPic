@@ -18,17 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FIRApp.configure()
         
-        
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         let categoryVC = UINavigationController(rootViewController: CategoryViewController())
-        //let uploadVC = UploadViewController()
         let uploadVC = UINavigationController(rootViewController: UploadViewController())
         let profileVC = UINavigationController(rootViewController: ProfileViewController())
-        
         let tabs = UITabBarController()
         tabs.viewControllers = [categoryVC, uploadVC, profileVC]
-        
         
         let categoryTab = UITabBarItem(title: nil, image: #imageLiteral(resourceName: "gallery_icon"), selectedImage: #imageLiteral(resourceName: "gallery_icon"))
         categoryTab.imageInsets = UIEdgeInsets(top: 2, left: 0, bottom: -2, right: 0)
@@ -70,8 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = user!.uid
             }
         }
-        
-        
+
         return true
     }
     

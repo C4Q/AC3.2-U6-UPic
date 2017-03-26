@@ -10,6 +10,7 @@ import UIKit
 
 class TopCollectionViewCell: UICollectionViewCell {
 
+    // MARK: - Properties
     @IBOutlet weak var imageView: UIImageView!
     
     override func awakeFromNib() {

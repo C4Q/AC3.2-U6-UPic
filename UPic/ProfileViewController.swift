@@ -35,7 +35,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         super.viewWillAppear(animated)
         
         self.propertyAnimator = UIViewPropertyAnimator(duration: 1.8, dampingRatio: 0.75, animations: nil)
-        
         configureConstraints()
     }
     
@@ -45,7 +44,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         _ = [usernameContainerView, passwordContainerView, loginButton, registerButton].map { $0.isHidden = false }
 
         self.animateLogo()
-        
         self.addPropertyAnimations()
         self.startAnimations()
     }
@@ -78,14 +76,12 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     func configureConstraints() {
-        // Image View
         UPicLogo.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 175.0, height: 175.0))
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(40.0)
         }
         
-        // Containers
         usernameContainerView.snp.makeConstraints { (make) in
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
@@ -100,7 +96,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             make.trailing.equalTo(self.usernameContainerView.snp.trailing)
         }
         
-        // Textfields
         usernameTextField.snp.makeConstraints { (make) in
             make.leading.top.equalTo(usernameContainerView).offset(4.0)
             make.trailing.bottom.equalTo(usernameContainerView).inset(4.0)
@@ -111,7 +106,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
             make.trailing.bottom.equalTo(passwordContainerView).inset(4.0)
         }
         
-        // Buttons
         registerButton.snp.makeConstraints { (make) in
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(60.0)
@@ -128,7 +122,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     
     // MARK: - Property Animations
     internal func addPropertyAnimations() {
-        
         propertyAnimator?.addAnimations ({
             self.usernameContainerView.alpha = 1.0
             self.passwordContainerView.alpha = 1.0
@@ -141,7 +134,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     internal func animateLogo() {
     
         UIView.animate(withDuration: 0.25, delay: 0.2, options: .autoreverse, animations: {
-            
             let scale = CGAffineTransform(scaleX: 0.2, y: 0.2)
             let rotation = CGAffineTransform(rotationAngle: CGFloat.pi + CGFloat.pi/2)
             let combined = scale.concatenating(rotation)
@@ -215,7 +207,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
     }
     
     // MARK: - Lazy Instantiates
-    // Logo Image View
     lazy var UPicLogo: UIImageView = {
         let logo = UIImageView()
         logo.image = #imageLiteral(resourceName: "logo")
@@ -223,7 +214,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         return logo
     }()
     
-    // Textfields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
         return textField
@@ -235,7 +225,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         return textField
     }()
     
-    // Containers
     internal lazy var usernameContainerView: UIView = {
         let view: UIView = UIView()
         return view
@@ -246,7 +235,6 @@ class ProfileViewController: UIViewController, CellTitled, UITextFieldDelegate {
         return view
     }()
     
-    // Buttons
     internal lazy var loginButton: UIButton = {
         let button: UIButton = UIButton()
         return button

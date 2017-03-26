@@ -27,7 +27,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
     var imageName = ""
     var imageTitleArr: [String] = []
     
-    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,7 +62,6 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         colView.dataSource = self
         colView.register(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "GalleryCell")
         colView.backgroundColor = ColorPalette.primaryColor
-        
         
         self.navigationController?.navigationBar.tintColor = ColorPalette.accentColor
         self.title = titleForCell
@@ -143,9 +141,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             if let error = error {
                 print("Error ----- \(error.localizedDescription)")
             }
-                
             else {
-                
                 let upvotesMetadata = metaData?.customMetadata!["upvotes"]!
                 let downvotesMetadata = metaData?.customMetadata!["downvotes"]!
                 
@@ -154,24 +150,20 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
             }
         }
         
-        
         cell.imageView.image = nil
-        
         cell.imageView.image = self.imagesToLoad[indexPath.row]
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         let displayImageVC = DisplayImageViewController()
         let index = indexPath.row
+        
         if FIRAuth.auth()?.currentUser?.isAnonymous == false {
-            
             let userProfileImageReference: FIRDatabaseReference? = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
             
             userProfileImageReference?.child("username").observe(.value, with: { (snapshot) in
-                
                 displayImageVC.currentUserName = snapshot.value as? String
                 displayImageVC.currentUserId = (userProfileImageReference?.key)!
             })
@@ -196,38 +188,5 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         let width = (self.view.frame.size.width) / 2.0
         return CGSize(width: width, height: height)
     }
-    
-    
-    // MARK: UICollectionViewDelegate
-    
-    /*
-     // Uncomment this method to specify if the specified item should be highlighted during tracking
-     override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-     return true
-     }
-     */
-    
-    /*
-     // Uncomment this method to specify if the specified item should be selected
-     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-     return true
-     }
-     */
-    
-    /*
-     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-     override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-     return false
-     }
-     
-     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-     return false
-     }
-     
-     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-     
-     }
-     */
-    
 }
 

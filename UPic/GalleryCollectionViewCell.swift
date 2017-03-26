@@ -10,6 +10,7 @@ import UIKit
 
 class GalleryCollectionViewCell: UICollectionViewCell {
 
+    // MARK: - Properties
     var imageView: UIImageView!
     var newOverlay: UIView!
     var upArrow: UIImageView!
@@ -106,5 +107,4 @@ extension UIImage {
             return nil
         }
     }
-    
 }

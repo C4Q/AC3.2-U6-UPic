@@ -67,14 +67,12 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     }
     
     func configureConstraints() {
-        // Image View
         profilePic.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 200.0, height: 200.0))
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(75.0)
         }
         
-        // Text Fields
         usernameTextField.snp.makeConstraints { (make) in
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(44.0)
@@ -96,7 +94,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
             make.top.equalTo(emailTextField.snp.bottom).offset(20.0)
         }
         
-        // Buttons
         doneButton.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.width.equalTo(cancelButton)
@@ -111,7 +108,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
             make.bottom.equalTo(self.view.snp.bottom).inset(16.0)
         }
         
-        // Labels
         validUsernameLabel.snp.makeConstraints { (make) in
             make.top.equalTo(usernameTextField.snp.bottom)
             make.leading.equalTo(usernameTextField)
@@ -330,7 +326,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
     }
     
     // MARK: - Lazy Instantiates
-    // Image View
     lazy var profilePic: UIImageView = {
         let profilePic = UIImageView()
         profilePic.backgroundColor = .white
@@ -340,11 +335,9 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
         profilePic.layer.cornerRadius = 100
         profilePic.layer.masksToBounds = true
         profilePic.isUserInteractionEnabled = true
-        
         return profilePic
     }()
     
-    // Buttons
     internal lazy var doneButton: UIButton = {
         let button = UIButton()
         return button
@@ -355,7 +348,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
         return button
     }()
     
-    // Text Fields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
         return textField
@@ -372,7 +364,6 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
         return textField
     }()
     
-    // Input Minimum Labels
     internal lazy var validUsernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = ColorPalette.textIconColor

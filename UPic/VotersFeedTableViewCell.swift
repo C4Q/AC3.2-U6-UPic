@@ -10,6 +10,7 @@ import UIKit
 
 class VotersFeedTableViewCell: UITableViewCell {
     
+    // MARK: - Properties
     var propicImage = UIImageView()
     var feedLabel = UILabel()
 
@@ -19,7 +20,6 @@ class VotersFeedTableViewCell: UITableViewCell {
         propicImage.contentMode = .scaleAspectFill
         propicImage.layer.cornerRadius = contentView.frame.size.height / 2
         propicImage.layer.masksToBounds = true
-        
         
         contentView.addSubview(propicImage)
         contentView.addSubview(feedLabel)
@@ -54,6 +54,4 @@ class VotersFeedTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-
-
 }

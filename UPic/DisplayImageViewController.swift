@@ -14,6 +14,7 @@ import FirebaseAuth
 
 class DisplayImageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    // MARK: - Properties
     let reuseIdentifier = "votersFeedCell"
     var image: UIImage!
     var imageUrl: URL!
@@ -30,6 +31,7 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
     var currentUserName: String?
     var currentUserId: String?
     
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,13 +42,8 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         selectedImageView.image = image
         selectedImageView.setNeedsLayout()
         getVoters()
-<<<<<<< HEAD
-        
+    
         navigationItem.title = imageTitle.uppercased()
-        
-=======
-
->>>>>>> a6effb14dd59ed37436db7a749a2e8b624c7ba3f
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,8 +52,8 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         
     }
     
+    // MARK: - Setup View Hierarchy & Constraints
     func setupViewHierarchy() {
-        
         self.view.addSubview(imageContainerView)
         imageContainerView.addSubview(selectedImageView)
         imageContainerView.addSubview(votesContainerView)
@@ -67,32 +64,79 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         
         upvoteButton.addTarget(self, action: #selector(upvoteButtonTapped(sender:)), for: .touchUpInside)
         downvoteButton.addTarget(self, action: #selector(downvoteButtonTapped(sender:)), for: .touchUpInside)
+        
         votersFeedTableView.delegate = self
         votersFeedTableView.dataSource = self
         self.view.addSubview(votersFeedTableView)
         votersFeedTableView.register(VotersFeedTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
     }
     
+    func configureConstraints() {
+        imageContainerView.snp.makeConstraints { (view) in
+            let targetHeight = self.navigationController?.navigationBar.frame.size.height
+            view.top.equalToSuperview().offset(targetHeight!)
+            view.leading.trailing.equalToSuperview()
+            view.height.equalToSuperview().multipliedBy(0.5)
+        }
+        
+        votersFeedTableView.snp.makeConstraints { (view) in
+            view.top.equalTo(imageContainerView.snp.bottom)
+            view.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        selectedImageView.snp.makeConstraints { (view) in
+            view.top.leading.trailing.equalTo(imageContainerView)
+            view.bottom.equalTo(imageContainerView.snp.bottom).inset(20.0)
+        }
+        
+        votesContainerView.snp.makeConstraints { (view) in
+            view.leading.trailing.bottom.equalTo(imageContainerView)
+            view.top.equalTo(imageContainerView.snp.bottom).inset(60.0)
+        }
+        
+        upvotesLabel.snp.makeConstraints { (view) in
+            view.bottom.equalTo(votesContainerView)
+            view.height.equalTo(20.0)
+            view.width.equalTo(votesContainerView.snp.width).multipliedBy(0.5)
+            view.leading.equalTo(votesContainerView.snp.leading)
+        }
+        
+        upvoteButton.snp.makeConstraints { (view) in
+            view.top.equalTo(votesContainerView.snp.top).offset(10.0)
+            view.centerX.equalTo(upvotesLabel.snp.centerX)
+            view.height.equalTo(20)
+            view.width.size.equalTo(20.0)
+        }
+        
+        downvotesLabel.snp.makeConstraints { (view) in
+            view.bottom.equalTo(votesContainerView)
+            view.height.equalTo(20.0)
+            view.width.equalTo(votesContainerView.snp.width).multipliedBy(0.5)
+            view.trailing.equalTo(votesContainerView.snp.trailing)
+        }
+        
+        downvoteButton.snp.makeConstraints { (view) in
+            view.top.equalTo(votesContainerView.snp.top).offset(10.0)
+            view.centerX.equalTo(downvotesLabel.snp.centerX)
+            view.height.equalTo(20)
+            view.width.size.equalTo(20.0)
+        }
+    }
+    
+    // MARK: - Image & Up/Down Vote Methods
     func downloadProfileImage(username: String) {
         let userRef = FIRDatabase.database().reference().child("users")
         var idToName: (id: String,name: String) = ("","")
         
-        
         userRef.observe(.childAdded, with: { (snapshot) in
-            
-            guard let user = snapshot.childSnapshot(forPath: "username").value as? String else {
-                return
-            }
+            guard let user = snapshot.childSnapshot(forPath: "username").value as? String else { return }
 
             if user == username {
-      
                 idToName.id = snapshot.key
                 idToName.name = user
                 
                 userRef.child(idToName.id).observe(.value, with: { (snapshot) in
-                    
                     if let profileImageURL = snapshot.childSnapshot(forPath: "profileImageURL").value as? String {
-                        
                         if let cachedProfilePic = imageCache.object(forKey: profileImageURL as AnyObject) as? UIImage {
                             DispatchQueue.main.async {
                                 self.view.layoutSubviews()
@@ -101,15 +145,12 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
                                     self.votersFeedTableView.reloadData()
                                 }
                             }
-                            
                             return
                         }
                         
                         // Download Image If Not Found In Cache. Insert into cache as well
                         let storageRef = FIRStorage.storage().reference(forURL: profileImageURL)
-                        
                         storageRef.data(withMaxSize: 10 * 1024 * 1024) { (data, error) -> Void in
-                            
                             if let data = data {
                                 let pic = UIImage(data: data)
                                 imageCache.setObject(pic!, forKey: profileImageURL as AnyObject)
@@ -128,13 +169,11 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         })
     }
     
-    
     func getVoters() {
         let databaseRef = FIRDatabase.database().reference()
         let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitle)
         
         ref.observe(.value, with: { (snapshot) in
-            
             var votingFeed: [String] = []
             var upvoters: [String] = []
             var downvoters: [String] = []
@@ -142,7 +181,6 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             
             if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
                 upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
-
             }
             
             if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
@@ -168,37 +206,9 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
             self.allVoters = localAllVoters
             self.allVotingsFeed = votingFeed
             DispatchQueue.main.async {
-           
                 self.votersFeedTableView.reloadData()
             }
         })
-    }
-    
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return allVotingsFeed.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
-        
-        cell.propicImage.image = nil
-        cell.textLabel?.text = nil
-        
-        cell.feedLabel.text = allVotingsFeed[indexPath.row]
-        let voterName = allVoters[indexPath.row]
-        
-        
-        if profileIdToImage[allVoters[indexPath.row]] != nil {
-            
-            cell.propicImage.image = profileIdToImage[voterName]!
-        }
-        else {
-            cell.propicImage.image = UIImage(named: "user_icon")
-        }
-        
-        return cell
     }
     
     internal func upvoteButtonTapped(sender: UIButton) {
@@ -315,59 +325,35 @@ class DisplayImageViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
+    // MARK: - Table View Data Source
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return allVotingsFeed.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! VotersFeedTableViewCell
+        
+        cell.propicImage.image = nil
+        cell.textLabel?.text = nil
+        cell.feedLabel.text = allVotingsFeed[indexPath.row]
+        let voterName = allVoters[indexPath.row]
+        
+        if profileIdToImage[allVoters[indexPath.row]] != nil {
+            cell.propicImage.image = profileIdToImage[voterName]!
+        }
+        else {
+            cell.propicImage.image = UIImage(named: "user_icon")
+        }
+        
+        return cell
+    }
+    
     func updateVoteLabels() {
         self.upvotesLabel.text = String(upvotes)
         self.downvotesLabel.text = String(downvotes)
     }
     
-    func configureConstraints() {
-        self.imageContainerView.snp.makeConstraints { (view) in
-            let targetHeight = self.navigationController?.navigationBar.frame.size.height
-            view.top.equalToSuperview().offset(targetHeight!)
-            view.leading.trailing.equalToSuperview()
-            view.height.equalToSuperview().multipliedBy(0.5)
-        }
-        
-        self.votersFeedTableView.snp.makeConstraints { (view) in
-            view.top.equalTo(imageContainerView.snp.bottom)
-            view.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        self.selectedImageView.snp.makeConstraints { (view) in
-            view.top.leading.trailing.equalTo(imageContainerView)
-            view.bottom.equalTo(imageContainerView.snp.bottom).inset(20.0)
-        }
-        self.votesContainerView.snp.makeConstraints { (view) in
-            view.leading.trailing.bottom.equalTo(imageContainerView)
-            view.top.equalTo(imageContainerView.snp.bottom).inset(60.0)
-        }
-        self.upvotesLabel.snp.makeConstraints { (view) in
-            view.bottom.equalTo(votesContainerView)
-            view.height.equalTo(20.0)
-            view.width.equalTo(votesContainerView.snp.width).multipliedBy(0.5)
-            view.leading.equalTo(votesContainerView.snp.leading)
-        }
-        self.upvoteButton.snp.makeConstraints { (view) in
-            view.top.equalTo(votesContainerView.snp.top).offset(10.0)
-            view.centerX.equalTo(upvotesLabel.snp.centerX)
-            view.height.equalTo(20)
-            view.width.size.equalTo(20.0)
-        }
-        self.downvotesLabel.snp.makeConstraints { (view) in
-            view.bottom.equalTo(votesContainerView)
-            view.height.equalTo(20.0)
-            view.width.equalTo(votesContainerView.snp.width).multipliedBy(0.5)
-            view.trailing.equalTo(votesContainerView.snp.trailing)
-        }
-        self.downvoteButton.snp.makeConstraints { (view) in
-            view.top.equalTo(votesContainerView.snp.top).offset(10.0)
-            view.centerX.equalTo(downvotesLabel.snp.centerX)
-            view.height.equalTo(20)
-            view.width.size.equalTo(20.0)
-        }
-        
-    }
-    
+    // MARK: - Lazy Instantiates
     internal lazy var imageContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = ColorPalette.primaryColor

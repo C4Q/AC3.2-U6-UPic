@@ -55,7 +55,6 @@ class CategoryTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-
     // MARK: - Cell Setup
     internal func setHierarchyAndConstraintsOf(imageView: UIImageView, overlay: UIView, label: UILabel, to cell: UIView) {
         cell.addSubview(imageView)

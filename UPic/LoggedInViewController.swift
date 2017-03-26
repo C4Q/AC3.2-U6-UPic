@@ -26,25 +26,20 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     var userTableView: UITableView = UITableView()
     var userVotes: [String] = []
     var user = FIRAuth.auth()?.currentUser?.uid
-
     var userProfileImageReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
     var userUploadsReference = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!).child("uploads")
-    
     var picArray = [UIImage]()
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupViewHierarchy()
         configureConstraints()
         self.navigationItem.hidesBackButton = true
         downloadProfileImage()
         downloadUserUploads()
         populateUserVoteArray()
-      
-
-        //imagesCollectionView.clearsSelectionOnViewWillAppear = false
-
     }
     
     // MARK: - Setup View Hierarchy & Constraints
@@ -54,7 +49,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         self.tabBarController?.title = titleForCell
         
         createBottomCollectionView()
-        
         view.addSubview(imagesCollectionView)
         view.addSubview(profileImage)
         view.addSubview(userTableView)
@@ -69,11 +63,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func configureConstraints() {
-        
         imagesCollectionView.snp.makeConstraints { (view) in
             view.bottom.leading.trailing.equalToSuperview()
             view.height.equalTo(175.0)
         }
+       
         profileImage.snp.makeConstraints { (view) in
             view.top.centerX.equalToSuperview()
             view.height.width.equalTo(200.0)
@@ -88,7 +82,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     // MARK: - Actions
     func didTapLogout(sender: UIButton) {
-        
         do {
             try FIRAuth.auth()?.signOut()
             _ = self.navigationController?.popViewController(animated: true)
@@ -165,7 +158,6 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func downloadUserUploads() {
-        
         //Downloads User Uploads
         self.userUploadsReference.observe(.childAdded, with: { (snapshot) in
             // Get download URL from snapshot
@@ -198,7 +190,7 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
         })
     }
     
-    //Table View Methods
+    // MARK: - Table View Data Source
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -278,16 +270,11 @@ class LoggedInViewController: UIViewController, UICollectionViewDelegate, UIColl
             })
         }
         
-
         self.profileImage.image = info["UIImagePickerControllerOriginalImage"] as! UIImage?
         dismiss(animated: true, completion: nil)
     }
-
-    
     
     // MARK: - Lazy Instantiates
-    
-    // UIImage
     lazy var profileImage: UIImageView = {
         let profilePic = UIImageView()
         profilePic.contentMode = .scaleAspectFit
