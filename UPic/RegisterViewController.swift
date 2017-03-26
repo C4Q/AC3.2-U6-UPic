@@ -278,7 +278,7 @@ class RegisterViewController: UIViewController, CellTitled, UITextFieldDelegate,
                         storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                             
                             if error != nil {
-                                print(error)
+                                print(error?.localizedDescription as Any)
                                 return
                             }
                             

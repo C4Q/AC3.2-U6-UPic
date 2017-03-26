@@ -63,7 +63,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         colView.dataSource = self
         colView.register(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "GalleryCell")
         colView.backgroundColor = ColorPalette.primaryColor
-
+        
         
         self.navigationController?.navigationBar.tintColor = ColorPalette.accentColor
         self.title = titleForCell
@@ -95,9 +95,9 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                 if let cachedImage = imageCache.object(forKey: downloadURL as AnyObject) as? UIImage {
                     
                     self.imagesToLoad.append(cachedImage)
-
+                    
                     self.imageURLs.append(URL(string: downloadURL)!)
-
+                    
                     DispatchQueue.main.async {
                         self.colView.reloadData()
                     }
@@ -112,8 +112,8 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                         
                         //If Image isn't in Cache, insert it for future use
                         DispatchQueue.main.async {
-                        imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
-                        self.imagesToLoad.append(pic!)
+                            imageCache.setObject(pic!, forKey: downloadURL as AnyObject)
+                            self.imagesToLoad.append(pic!)
                             self.colView.reloadData()
                         }
                     }
@@ -139,7 +139,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         let ref = self.refArr[indexPath.row]
         
         ref.metadata { (metaData, error) in
-           
+            
             if let error = error {
                 print("Error ----- \(error.localizedDescription)")
             }
@@ -153,8 +153,8 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
                 cell.downLabel.text = downvotesMetadata!
             }
         }
-
-
+        
+        
         cell.imageView.image = nil
         
         cell.imageView.image = self.imagesToLoad[indexPath.row]
@@ -166,15 +166,25 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         
         let displayImageVC = DisplayImageViewController()
         let index = indexPath.row
+        if FIRAuth.auth()?.currentUser?.isAnonymous == false {
+            
+            let userProfileImageReference: FIRDatabaseReference? = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
+            
+            userProfileImageReference?.child("username").observe(.value, with: { (snapshot) in
+                
+                displayImageVC.currentUserName = snapshot.value as? String
+                displayImageVC.currentUserId = (userProfileImageReference?.key)!
+            })
+            
+        }
         
         displayImageVC.image = self.imagesToLoad[index]
         displayImageVC.imageUrl = self.imageURLs[index]
         displayImageVC.ref = self.refArr[index]
-        displayImageVC.category = category
+        displayImageVC.category = self.category
         displayImageVC.imageTitle = self.imageTitleArr[index]
         
         self.navigationController?.pushViewController(displayImageVC, animated: false)
-        
         let backItem = UIBarButtonItem()
         backItem.title = ""
         navigationItem.backBarButtonItem = backItem
@@ -187,40 +197,7 @@ class GalleryCollectionViewController: UIViewController, UICollectionViewDataSou
         return CGSize(width: width, height: height)
     }
     
-    func getVoters(imageTitle: String) -> (Int, Int) {
-        let databaseRef = FIRDatabase.database().reference()
-        let ref = databaseRef.child("categories").child(category.rawValue).child(imageTitle)
-        
-        var upvoters: [String] = []
-        var downvoters: [String] = []
-        var upNum = 0
-        var downNum = 0
-        
-        ref.observe(.value, with: { (snapshot) in
-            
-            if snapshot.childSnapshot(forPath: "upvotes").childrenCount > 0 {
-                upvoters = snapshot.childSnapshot(forPath: "upvotes").value! as! [String]
-            }
-            
-            if snapshot.childSnapshot(forPath: "downvotes").childrenCount > 0 {
-                downvoters = snapshot.childSnapshot(forPath: "downvotes").value! as! [String]
-            }
-            
-            for name in upvoters {
-                if name != "" {
-                    upNum += 1
-                }
-            }
-            
-            for name in downvoters {
-                if name != "" {
-                    downNum += 1
-                }
-            }
-        })
-        return (upNum, downNum)
-    }
-
+    
     // MARK: UICollectionViewDelegate
     
     /*
