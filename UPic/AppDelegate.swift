@@ -30,7 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabs.viewControllers = [categoryVC, uploadVC, profileVC]
         
         
-        
         let categoryTab = UITabBarItem(title: nil, image: #imageLiteral(resourceName: "gallery_icon"), selectedImage: #imageLiteral(resourceName: "gallery_icon"))
         categoryTab.imageInsets = UIEdgeInsets(top: 2, left: 0, bottom: -2, right: 0)
         categoryVC.tabBarItem = categoryTab
@@ -57,20 +56,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
         
         if FIRAuth.auth()?.currentUser != nil {
-        do {
+            do {
                 try FIRAuth.auth()?.signOut()
             }
             catch {
                 print(error)
             }
         }
-       
-            do {
-                FIRAuth.auth()?.signInAnonymously() { (user, error) in
-                    _ = user!.isAnonymous  // true
-                    _ = user!.uid
-                }
+        
+        do {
+            FIRAuth.auth()?.signInAnonymously() { (user, error) in
+                _ = user!.isAnonymous  // true
+                _ = user!.uid
             }
+        }
         
         
         return true
