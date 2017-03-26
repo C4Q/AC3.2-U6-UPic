@@ -11,7 +11,7 @@ in a top-list.
 
 ### Launch Screen
 
-![Launch Screen](images/Artboards/Launch Screen.png)
+![Launch Screen](images/Artboards/Launch\ Screen.png)
 
 ### Login
 
