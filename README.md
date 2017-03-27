@@ -1,4 +1,4 @@
-# UPic
+# ![](UPic/Assets.xcassets/AppIcon.appiconset/Icon-App-72x72@1x.png)UPic
 
 ## Introduction
 
