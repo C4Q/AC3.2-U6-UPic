@@ -1,8 +1,8 @@
-# That Photo Category App
+# UPic
 
 ## Introduction
 
-\[TBD\] is a social image sharing and upvoting app. Each new image is uploaded to one of a 
+UPic is a social image sharing and upvoting app. Each new image is uploaded to one of a 
 set of categories and is subsequently ranked by up- and down- votes within it. 
 By funneling images into discrete categories more opportunites for each image to feature
 in a top-list.
