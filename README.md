@@ -62,7 +62,7 @@ in a top-list.
 ![Upload Flow](images/Flows/upload_flow.png)
 
 
-## ETC.
+## Other Things + Etceteras
 
 ### Color Palette
 
