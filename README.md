@@ -11,7 +11,7 @@ in a top-list.
 
 ### Launch Screen
 
-![Launch Screen](images/Artboards/Launch\ Screen.png)
+![Launch Screen](images/Artboards/Launch%20Screen.png)
 
 ### Login
 
@@ -21,15 +21,15 @@ in a top-list.
 
 #### Main Screen
 
-![Category Selection](images/Artboards/Category Selection.png)
+![Category Selection](images/Artboards/Category%20Selection.png)
 
 #### Category
 
-![Top in Category](images/Artboards/Top in Category.png)
+![Top in Category](images/Artboards/Top%20In%20Category.png)
 
 #### Single Image
 
-![Single Image](images/Artboards/Single Image.png)
+![Single Image](images/Artboards/Single%20Image.png)
 
 ### Uploads
 
@@ -39,11 +39,11 @@ in a top-list.
 
 #### Upload (progress)
 
-![Uploads - Uploading](images/Artboards/Uploads - Uploading.png)
+![Uploads - Uploading](images/Artboards/Uploads%20-%20Uploading.png)
 
 #### Upload (complete)
 
-![Uploads - Success](images/Artboards/Uploads - Success.png)
+![Uploads - Success](images/Artboards/Uploads%20-%20Success.png)
 
 ## Flows
 
@@ -62,16 +62,11 @@ in a top-list.
 ![Upload Flow](images/Flows/upload_flow.png)
 
 
-## Implementation Requirements
+## ETC.
 
 ### Color Palette
 
 ![Palette](images/Flows/color_palette.png)
-
-### Assets
-
-All assets for the app icons can be [found here](images/Assets).
-
 
 ### Backend Services
 
@@ -119,8 +114,7 @@ taps the upload button in the navigation bar. Progress and success (and failure)
 
 ### Animations
 
-The first priority is to match the designs as closely as possible. Additionally, the app uses 
-animations to enhance user experience and add polish.  We consulted with a UI/UX firm and 
+The app uses animations to enhance user experience and add polish.  We consulted with a UI/UX firm and 
 they recommend (and so we require):
 
 * at least one ```UIDynamicAnimator```
@@ -128,9 +122,7 @@ they recommend (and so we require):
 * at least one "complex" animation
 * animations are smooth and bug free. 
 
-We leave it up to the developer to decide where best to place animations but in order to minimize
-external dependencies we require all animations be done in original code. CocoaPods cannot be used 
-directly for animations, meaning using SnapKit is fine but using Facebook's Pop isn't.
+CocoaPods were not used directly for animations - SnapKit is fine but using Facebook's Pop isn't.
 
 
 
